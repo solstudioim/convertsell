@@ -1,8 +1,8 @@
 <?php
 /**
- * Purple Optimize setup. All storefront presentation is inherited from Purple.
+ * ConvertSell setup. All storefront presentation is inherited from Purple.
  *
- * @package PurpleOptimize
+ * @package ConvertSell
  */
 
 declare( strict_types = 1 );

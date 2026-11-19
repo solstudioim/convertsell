@@ -5,10 +5,10 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const theme = path.join(root, 'wp-content/themes/purple-optimize');
+const theme = path.join(root, 'wp-content/themes/convertsell');
 const read = (relativePath) => fs.readFileSync(path.join(theme, relativePath), 'utf8');
-const toolkitJs = fs.readFileSync(path.join(root, 'wp-content/plugins/purple-optimize-toolkit/assets/toolkit.js'), 'utf8');
-const toolkitPhp = fs.readFileSync(path.join(root, 'wp-content/plugins/purple-optimize-toolkit/purple-optimize-toolkit.php'), 'utf8');
+const toolkitJs = fs.readFileSync(path.join(root, 'wp-content/plugins/convertsell-toolkit/assets/toolkit.js'), 'utf8');
+const toolkitPhp = ['convertsell-toolkit.php', 'includes/runtime.php'].map((file) => fs.readFileSync(path.join(root, 'wp-content/plugins/convertsell-toolkit', file), 'utf8')).join('\n');
 
 test('README displays the current child theme release', () => {
 	const stylesheet = read('style.css');
@@ -32,7 +32,7 @@ test('child theme carries WordPress.org release metadata and upstream attributio
 	const themeReadme = fs.readFileSync(themeReadmePath, 'utf8');
 	const projectReadme = fs.readFileSync(path.join(root, 'README.md'), 'utf8');
 	const version = stylesheet.match(/^Version:\s*(\S+)/m)?.[1];
-	assert.match(stylesheet, /^Theme URI:\s*https:\/\/github\.com\/solstudioim\/purple-cro-optimized$/m);
+	assert.match(stylesheet, /^Theme URI:\s*https:\/\/github\.com\/solstudioim\/convertsell$/m);
 	assert.match(stylesheet, /^Requires at least:\s*7\.1$/m);
 	assert.match(stylesheet, /^Tested up to:\s*7\.1$/m);
 	assert.match(themeReadme, new RegExp(`^Stable tag:\\s*${version?.replaceAll('.', '\\.')}$`, 'm'));
@@ -43,8 +43,8 @@ test('child theme carries WordPress.org release metadata and upstream attributio
 
 test('README identifies the toolkit admin menu and access requirements', () => {
 	const readme = fs.readFileSync(path.join(root, 'README.md'), 'utf8');
-	assert.match(readme, /WooCommerce →\s+Purple Optimize/);
-	assert.match(readme, /admin\.php\?page=purple-optimize/);
+	assert.match(readme, /WooCommerce →\s+ConvertSell/);
+	assert.match(readme, /admin\.php\?page=convertsell/);
 	assert.match(readme, /manage_woocommerce/);
 });
 

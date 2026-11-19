@@ -8,15 +8,15 @@ import re
 import zipfile
 
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument('--output', type=Path, default=Path('/Users/sol/Codex/artifacts/purple-cro-optimized/releases'))
+parser.add_argument('--output', type=Path, default=Path('/Users/sol/Codex/artifacts/convertsell/releases'))
 args = parser.parse_args()
 root = Path(__file__).resolve().parents[1]
 output = args.output.expanduser().resolve()
 output.mkdir(parents=True, exist_ok=True)
 manifest = {}
 for slug, source, entry in [
-    ('purple-optimize', root / 'wp-content/themes/purple-optimize', 'style.css'),
-    ('purple-optimize-toolkit', root / 'wp-content/plugins/purple-optimize-toolkit', 'purple-optimize-toolkit.php'),
+    ('convertsell', root / 'wp-content/themes/convertsell', 'style.css'),
+    ('convertsell-toolkit', root / 'wp-content/plugins/convertsell-toolkit', 'convertsell-toolkit.php'),
 ]:
     version = re.search(r'^\s*(?:\*\s*)?Version:\s*(\S+)', (source / entry).read_text(), re.M)[1]
     destination = output / f'{slug}-{version}.zip'

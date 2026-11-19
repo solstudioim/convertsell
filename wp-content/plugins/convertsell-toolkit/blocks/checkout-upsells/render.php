@@ -2,7 +2,7 @@
 /**
  * Native Checkout hydration placeholder; products come from the live Store API.
  *
- * @package PurpleOptimizeToolkit
+ * @package ConvertSellToolkit
  * @since 0.8.0
  */
 defined( 'ABSPATH' ) || exit;

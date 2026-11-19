@@ -2,7 +2,7 @@
 /**
  * Load checkout extension components before WooCommerce hydrates its inner blocks.
  *
- * @package PurpleOptimizeToolkit
+ * @package ConvertSellToolkit
  */
 
 defined( 'ABSPATH' ) || exit;

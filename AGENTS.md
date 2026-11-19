@@ -1,6 +1,6 @@
 ## Parent, child, and companion compatibility
 
-- Whenever syncing or checking compatibility between the Purple parent and the Purple Optimize child theme, include the Purple Optimize Toolkit companion plugin in the same scope.
+- Whenever syncing or checking compatibility between the Purple parent and the ConvertSell child theme, include the ConvertSell Toolkit companion plugin in the same scope.
 - Review parent changes against child overrides and companion integrations, including storefront hooks, blocks, assets, mini-cart, product forms, cart, checkout, offers, and admin settings.
 - Run relevant automated checks and verify the combined parent + child + companion experience on supported WordPress and WooCommerce versions. Preserve existing merchant settings.
 - Report parent, child, and companion verification separately. Passing theme checks alone does not establish companion compatibility; explicitly identify any untested flows or version limitations.

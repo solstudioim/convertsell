@@ -2,7 +2,7 @@
 /**
  * Optional checkout add-ons and merchant-authored order-summary content.
  *
- * @package PurpleOptimizeToolkit
+ * @package ConvertSellToolkit
  * @since 0.8.0
  */
 
@@ -118,11 +118,11 @@ function pot_render_checkout_settings(): void {
 	?>
 	<form method="post" action="options.php" id="pot-checkout-settings">
 		<?php settings_fields( 'pot_checkout_settings_group' ); ?>
-		<h2><?php esc_html_e( 'Checkout add-ons and helpful content', 'purple-optimize-toolkit' ); ?></h2>
-		<p><?php esc_html_e( 'Optional add-ons appear above Place order. Helpful content appears below the order summary. These settings are independent of the upsell/downsell funnel.', 'purple-optimize-toolkit' ); ?></p>
+		<h2><?php esc_html_e( 'Checkout add-ons and helpful content', 'convertsell-toolkit' ); ?></h2>
+		<p><?php esc_html_e( 'Optional add-ons appear above Place order. Helpful content appears below the order summary. These settings are independent of the upsell/downsell funnel.', 'convertsell-toolkit' ); ?></p>
 		<table class="form-table" role="presentation">
-			<tr><th scope="row"><?php esc_html_e( 'Checkout add-ons', 'purple-optimize-toolkit' ); ?></th><td><label><input type="checkbox" name="pot_checkout_settings[upsells_enabled]" value="1" <?php checked( $settings['upsells_enabled'] ); ?>> <?php esc_html_e( 'Enable optional checkout add-ons', 'purple-optimize-toolkit' ); ?></label>
-			<p class="description"><?php esc_html_e( 'Choose up to four published, visible, in-stock simple products. Images and prices come from the catalog, including real sale prices. Nothing is preselected.', 'purple-optimize-toolkit' ); ?></p></td></tr>
+			<tr><th scope="row"><?php esc_html_e( 'Checkout add-ons', 'convertsell-toolkit' ); ?></th><td><label><input type="checkbox" name="pot_checkout_settings[upsells_enabled]" value="1" <?php checked( $settings['upsells_enabled'] ); ?>> <?php esc_html_e( 'Enable optional checkout add-ons', 'convertsell-toolkit' ); ?></label>
+			<p class="description"><?php esc_html_e( 'Choose up to four published, visible, in-stock simple products. Images and prices come from the catalog, including real sale prices. Nothing is preselected.', 'convertsell-toolkit' ); ?></p></td></tr>
 			<?php for ( $index = 0; $index < 4; ++$index ) :
 				$row     = $settings['upsells'][ $index ] ?? array();
 				$id      = absint( $row['product_id'] ?? 0 );
@@ -130,28 +130,28 @@ function pot_render_checkout_settings(): void {
 				$prefix  = 'pot_checkout_settings[upsells][' . $index . ']';
 				$issue   = $id ? pot_offer_product_issue( $id ) : '';
 				?>
-			<tr><th scope="row"><label for="pot-checkout-product-<?php echo esc_attr( (string) $index ); ?>"><?php echo esc_html( sprintf( __( 'Add-on %d', 'purple-optimize-toolkit' ), $index + 1 ) ); ?></label></th><td>
-				<select class="wc-product-search" style="width: 100%; max-width: 480px;" id="pot-checkout-product-<?php echo esc_attr( (string) $index ); ?>" name="<?php echo esc_attr( $prefix ); ?>[product_id]" data-action="woocommerce_json_search_products" data-allow_clear="true" data-placeholder="<?php esc_attr_e( 'Search for a simple product…', 'purple-optimize-toolkit' ); ?>">
+			<tr><th scope="row"><label for="pot-checkout-product-<?php echo esc_attr( (string) $index ); ?>"><?php echo esc_html( sprintf( __( 'Add-on %d', 'convertsell-toolkit' ), $index + 1 ) ); ?></label></th><td>
+				<select class="wc-product-search" style="width: 100%; max-width: 480px;" id="pot-checkout-product-<?php echo esc_attr( (string) $index ); ?>" name="<?php echo esc_attr( $prefix ); ?>[product_id]" data-action="woocommerce_json_search_products" data-allow_clear="true" data-placeholder="<?php esc_attr_e( 'Search for a simple product…', 'convertsell-toolkit' ); ?>">
 					<?php if ( $id ) : ?><option value="<?php echo esc_attr( (string) $id ); ?>" selected><?php echo esc_html( $product ? wp_strip_all_tags( $product->get_formatted_name() ) : '#' . $id ); ?></option><?php endif; ?>
 				</select>
 				<?php if ( $issue ) : ?><p class="notice notice-warning inline"><?php echo esc_html( pot_offer_product_issue_message( $issue ) ); ?></p><?php endif; ?>
-				<p><label for="pot-checkout-discount-<?php echo esc_attr( (string) $index ); ?>"><?php esc_html_e( 'Optional discount (%)', 'purple-optimize-toolkit' ); ?></label><br><input type="number" class="small-text" min="0" max="100" step="1" id="pot-checkout-discount-<?php echo esc_attr( (string) $index ); ?>" name="<?php echo esc_attr( $prefix ); ?>[discount]" value="<?php echo esc_attr( (string) ( $row['discount'] ?? '' ) ); ?>" aria-describedby="pot-checkout-discount-help-<?php echo esc_attr( (string) $index ); ?>"></p>
-				<p class="description" id="pot-checkout-discount-help-<?php echo esc_attr( (string) $index ); ?>"><?php esc_html_e( 'Leave blank or enter 0 for no extra discount. The percentage comes off the current catalog price, including any sale price, only when added here. Existing accepted add-ons keep their accepted price.', 'purple-optimize-toolkit' ); ?></p>
-				<p><label for="pot-checkout-title-<?php echo esc_attr( (string) $index ); ?>"><?php esc_html_e( 'Optional headline', 'purple-optimize-toolkit' ); ?></label><br><input class="large-text" id="pot-checkout-title-<?php echo esc_attr( (string) $index ); ?>" name="<?php echo esc_attr( $prefix ); ?>[title]" value="<?php echo esc_attr( $row['title'] ?? '' ); ?>"></p>
-				<p><label for="pot-checkout-description-<?php echo esc_attr( (string) $index ); ?>"><?php esc_html_e( 'Optional description', 'purple-optimize-toolkit' ); ?></label><br><textarea class="large-text" rows="3" id="pot-checkout-description-<?php echo esc_attr( (string) $index ); ?>" name="<?php echo esc_attr( $prefix ); ?>[description]"><?php echo esc_textarea( $row['description'] ?? '' ); ?></textarea></p>
-				<p class="description"><?php esc_html_e( 'Leave copy blank to use the product name and short description. Clear the product to remove this add-on.', 'purple-optimize-toolkit' ); ?></p>
+				<p><label for="pot-checkout-discount-<?php echo esc_attr( (string) $index ); ?>"><?php esc_html_e( 'Optional discount (%)', 'convertsell-toolkit' ); ?></label><br><input type="number" class="small-text" min="0" max="100" step="1" id="pot-checkout-discount-<?php echo esc_attr( (string) $index ); ?>" name="<?php echo esc_attr( $prefix ); ?>[discount]" value="<?php echo esc_attr( (string) ( $row['discount'] ?? '' ) ); ?>" aria-describedby="pot-checkout-discount-help-<?php echo esc_attr( (string) $index ); ?>"></p>
+				<p class="description" id="pot-checkout-discount-help-<?php echo esc_attr( (string) $index ); ?>"><?php esc_html_e( 'Leave blank or enter 0 for no extra discount. The percentage comes off the current catalog price, including any sale price, only when added here. Existing accepted add-ons keep their accepted price.', 'convertsell-toolkit' ); ?></p>
+				<p><label for="pot-checkout-title-<?php echo esc_attr( (string) $index ); ?>"><?php esc_html_e( 'Optional headline', 'convertsell-toolkit' ); ?></label><br><input class="large-text" id="pot-checkout-title-<?php echo esc_attr( (string) $index ); ?>" name="<?php echo esc_attr( $prefix ); ?>[title]" value="<?php echo esc_attr( $row['title'] ?? '' ); ?>"></p>
+				<p><label for="pot-checkout-description-<?php echo esc_attr( (string) $index ); ?>"><?php esc_html_e( 'Optional description', 'convertsell-toolkit' ); ?></label><br><textarea class="large-text" rows="3" id="pot-checkout-description-<?php echo esc_attr( (string) $index ); ?>" name="<?php echo esc_attr( $prefix ); ?>[description]"><?php echo esc_textarea( $row['description'] ?? '' ); ?></textarea></p>
+				<p class="description"><?php esc_html_e( 'Leave copy blank to use the product name and short description. Clear the product to remove this add-on.', 'convertsell-toolkit' ); ?></p>
 			</td></tr>
 			<?php endfor; ?>
-			<tr><th scope="row"><?php esc_html_e( 'Helpful checkout content', 'purple-optimize-toolkit' ); ?></th><td><label><input type="checkbox" name="pot_checkout_settings[content_enabled]" value="1" <?php checked( $settings['content_enabled'] ); ?>> <?php esc_html_e( 'Show text and images below the order summary', 'purple-optimize-toolkit' ); ?></label>
-			<p class="description"><?php esc_html_e( 'Use the WordPress block editor for text, images and the reviews Shortcode block. Generate a review shortcode under Social proof, then paste it into a Shortcode block here. Save settings before opening the editor; publish content changes.', 'purple-optimize-toolkit' ); ?></p>
-			<p><a class="button" id="pot-edit-checkout-content" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=pot_edit_checkout_content' ), 'pot_edit_checkout_content' ) ); ?>"><?php esc_html_e( 'Open block editor', 'purple-optimize-toolkit' ); ?></a></p>
+			<tr><th scope="row"><?php esc_html_e( 'Helpful checkout content', 'convertsell-toolkit' ); ?></th><td><label><input type="checkbox" name="pot_checkout_settings[content_enabled]" value="1" <?php checked( $settings['content_enabled'] ); ?>> <?php esc_html_e( 'Show text and images below the order summary', 'convertsell-toolkit' ); ?></label>
+			<p class="description"><?php esc_html_e( 'Use the WordPress block editor for text, images and the reviews Shortcode block. Generate a review shortcode under Social proof, then paste it into a Shortcode block here. Save settings before opening the editor; publish content changes.', 'convertsell-toolkit' ); ?></p>
+			<p><a class="button" id="pot-edit-checkout-content" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=pot_edit_checkout_content' ), 'pot_edit_checkout_content' ) ); ?>"><?php esc_html_e( 'Open block editor', 'convertsell-toolkit' ); ?></a></p>
 			<?php if ( trim( pot_checkout_content_source() ) && ! has_blocks( pot_checkout_content_source() ) ) : ?>
-			<p class="description"><?php esc_html_e( 'Existing rich text is preserved in a Classic block. Select Convert to blocks to make each part editable.', 'purple-optimize-toolkit' ); ?></p>
+			<p class="description"><?php esc_html_e( 'Existing rich text is preserved in a Classic block. Select Convert to blocks to make each part editable.', 'convertsell-toolkit' ); ?></p>
 			<?php endif; ?>
-			<p class="description"><?php esc_html_e( 'Only published content appears at checkout. Use accurate claims; scripts, forms, and embedded checkout blocks are not supported.', 'purple-optimize-toolkit' ); ?></p>
+			<p class="description"><?php esc_html_e( 'Only published content appears at checkout. Use accurate claims; scripts, forms, and embedded checkout blocks are not supported.', 'convertsell-toolkit' ); ?></p>
 			</td></tr>
 		</table>
-		<?php submit_button( __( 'Save checkout features', 'purple-optimize-toolkit' ) ); ?>
+		<?php submit_button( __( 'Save checkout features', 'convertsell-toolkit' ) ); ?>
 	</form>
 	<?php
 }
@@ -252,7 +252,7 @@ function pot_checkout_cart_data(): array {
 function pot_update_checkout_upsell( $data ): void {
 	$settings = pot_checkout_settings();
 	if ( ! is_array( $data ) || ! isset( $data['id'], $data['selected'] ) || ! is_bool( $data['selected'] ) || ! is_int( $data['id'] ) || $data['id'] < 1 || ! WC()->cart || WC()->cart->is_empty() ) {
-		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_invalid_addon', __( 'Please refresh checkout and try again.', 'purple-optimize-toolkit' ), 400 );
+		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_invalid_addon', __( 'Please refresh checkout and try again.', 'convertsell-toolkit' ), 400 );
 	}
 	$id    = absint( $data['id'] );
 	$lines = pot_checkout_product_lines( $id );
@@ -266,14 +266,14 @@ function pot_update_checkout_upsell( $data ): void {
 		return;
 	}
 	if ( ! $settings['upsells_enabled'] || ! in_array( $id, array_column( $settings['upsells'], 'product_id' ), true ) ) {
-		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_unavailable_addon', __( 'This checkout add-on is no longer available.', 'purple-optimize-toolkit' ), 400 );
+		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_unavailable_addon', __( 'This checkout add-on is no longer available.', 'convertsell-toolkit' ), 400 );
 	}
 	if ( $lines ) {
 		return; // Repeated acceptance never increases quantity or duplicates a line.
 	}
 	$product = wc_get_product( $id );
 	if ( pot_offer_product_issue_for_product( $product ) || ! apply_filters( 'woocommerce_add_to_cart_validation', true, $id, 1 ) ) {
-		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_invalid_product', __( 'This add-on cannot be added. Please choose another item.', 'purple-optimize-toolkit' ), 400 );
+		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_invalid_product', __( 'This add-on cannot be added. Please choose another item.', 'convertsell-toolkit' ), 400 );
 	}
 	$cart_data = array( 'pot_checkout_upsell' => true );
 	foreach ( $settings['upsells'] as $row ) {
@@ -287,7 +287,7 @@ function pot_update_checkout_upsell( $data ): void {
 		}
 	}
 	if ( ! WC()->cart->add_to_cart( $id, 1, 0, array(), $cart_data ) ) {
-		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_addon_failed', __( 'Could not add this item. Please check its availability and try again.', 'purple-optimize-toolkit' ), 400 );
+		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_addon_failed', __( 'Could not add this item. Please check its availability and try again.', 'convertsell-toolkit' ), 400 );
 	}
 }
 
@@ -308,7 +308,7 @@ add_action( 'woocommerce_before_calculate_totals', 'pot_apply_checkout_addon_pri
 function pot_checkout_addon_item_data( array $data, array $item ): array {
 	$discount = pot_checkout_accepted_discount( $item );
 	if ( $discount ) {
-		$data[] = array( 'key' => __( 'Checkout add-on discount', 'purple-optimize-toolkit' ), 'value' => sprintf( __( '%d%% off', 'purple-optimize-toolkit' ), $discount ) );
+		$data[] = array( 'key' => __( 'Checkout add-on discount', 'convertsell-toolkit' ), 'value' => sprintf( __( '%d%% off', 'convertsell-toolkit' ), $discount ) );
 	}
 	return $data;
 }
@@ -318,7 +318,7 @@ add_filter( 'woocommerce_get_item_data', 'pot_checkout_addon_item_data', 10, 2 )
 function pot_checkout_addon_order_meta( WC_Order_Item_Product $item, string $key, array $values ): void {
 	$discount = pot_checkout_accepted_discount( $values );
 	if ( $discount ) {
-		$item->add_meta_data( __( 'Checkout add-on discount', 'purple-optimize-toolkit' ), sprintf( __( '%d%% off', 'purple-optimize-toolkit' ), $discount ), true );
+		$item->add_meta_data( __( 'Checkout add-on discount', 'convertsell-toolkit' ), sprintf( __( '%d%% off', 'convertsell-toolkit' ), $discount ), true );
 		$item->add_meta_data( '_pot_checkout_discount', $discount, true );
 		$item->add_meta_data( '_pot_checkout_base_price', $values['pot_checkout_base_price'], true );
 	}
@@ -360,7 +360,7 @@ function pot_register_checkout_assets(): void {
 		return;
 	}
 	wp_register_script( 'pot-checkout-extras', POT_URL . 'assets/checkout-extras.js', array( 'wc-blocks-checkout', 'wc-blocks-data-store', 'wp-element', 'wp-data', 'wp-i18n' ), (string) filemtime( POT_PATH . 'assets/checkout-extras.js' ), true );
-	wp_set_script_translations( 'pot-checkout-extras', 'purple-optimize-toolkit' );
+	wp_set_script_translations( 'pot-checkout-extras', 'convertsell-toolkit' );
 	wp_register_style( 'pot-checkout-extras', POT_URL . 'assets/checkout-extras.css', array(), (string) filemtime( POT_PATH . 'assets/checkout-extras.css' ) );
 	wp_register_style( 'pot-checkout-content', POT_URL . 'assets/checkout-content.css', array(), (string) filemtime( POT_PATH . 'assets/checkout-content.css' ) );
 }

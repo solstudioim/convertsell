@@ -2,7 +2,7 @@
 /**
  * Pure storefront presentation policies shared by the WooCommerce adapters.
  *
- * @package PurpleOptimizeToolkit
+ * @package ConvertSellToolkit
  */
 
 defined( 'ABSPATH' ) || exit;

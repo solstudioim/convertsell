@@ -4,7 +4,7 @@
  *
  * Run with: wp eval-file tools/set-offer-placement.php pre_checkout
  *
- * @package PurpleOptimize
+ * @package ConvertSell
  */
 
 defined( 'ABSPATH' ) || exit;

@@ -7,7 +7,7 @@ declare( strict_types = 1 );
 
 define( 'ABSPATH', dirname( __DIR__ ) . '/' );
 
-require_once dirname( __DIR__ ) . '/wp-content/plugins/purple-optimize-toolkit/includes/storefront-presentation.php';
+require_once dirname( __DIR__ ) . '/wp-content/plugins/convertsell-toolkit/includes/storefront-presentation.php';
 
 /**
  * Fail with a useful message without relying on PHP's optional assertions.

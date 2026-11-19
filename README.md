@@ -1,18 +1,18 @@
-# Purple CRO Optimized
+# ConvertSell
 
-Purple CRO Optimized is a conversion-focused WooCommerce implementation built
+ConvertSell is a conversion-focused WooCommerce implementation built
 on Woo's Purple block theme. It preserves the parent's appearance and adds optional conversion elements.
 
-**Current child-theme release:** `0.6.0`
+**Current child-theme release:** `0.7.0`
 
-**Current toolkit release:** `0.11.10`
+**Current toolkit release:** `0.12.0`
 
 **Historical demo (previous custom design):** https://purplecrodemo.wpcomstaging.com/
 
 The project is deliberately split into two packages:
 
-- `wp-content/themes/purple-optimize`: a child theme that inherits Purple presentation and adds companion setup.
-- `wp-content/plugins/purple-optimize-toolkit`: optional store functionality.
+- `wp-content/themes/convertsell`: a child theme that inherits Purple presentation and adds companion setup.
+- `wp-content/plugins/convertsell-toolkit`: optional store functionality.
 
 The child theme is built on the
 [Woo Purple parent theme](https://github.com/woocommerce/woocommerce/tree/trunk/themes/purple),
@@ -31,9 +31,9 @@ The existing CRO feature defaults and saved settings are preserved. Offers and
 checkout add-ons still require explicit product configuration; recent-purchase proof remains off.
 Updating the theme files does not replace templates saved in the Site Editor.
 
-## Feedback baseline: child 0.6.0 / toolkit 0.11.10
+## ConvertSell rename: child 0.7.0 / toolkit 0.12.0
 
-**Development freeze:** toolkit 0.11.10 is the feedback baseline. Further feature and styling changes are paused pending feedback from the upstream Purple theme developers. Resume development only when the maintainer explicitly reopens it. Repository sync does not publish GitHub release assets or deploy a site.
+**Development freeze:** toolkit 0.12.0 carries the ConvertSell identity over the 0.11.10 feedback baseline. Further feature and styling changes are paused pending feedback from the upstream Purple theme developers. Resume development only when the maintainer explicitly reopens it. Repository sync does not publish GitHub release assets or deploy a site.
 
 Toolkit 0.11.5 restores the native cart drawer opening after add to cart when the
 child theme’s mini-cart has no saved behavior choice. Explicit block choices are
@@ -48,11 +48,11 @@ Editor templates and global styles remain saved and may mask inherited defaults.
 ## WordPress.org submission preparation
 
 The directory-ready child-theme package is limited to
-`wp-content/themes/purple-optimize`; the optional toolkit plugin is never bundled
+`wp-content/themes/convertsell`; the optional toolkit plugin is never bundled
 inside the theme ZIP. See
 [`docs/wordpress-org-theme-submission.md`](docs/wordpress-org-theme-submission.md)
-for the packaging command, review checklist, upstream attribution, and the two
-items that require confirmation from the Themes Team before submission.
+for the packaging command, review checklist, upstream attribution, and
+directory submission checks.
 
 ## Included conversion features
 
@@ -66,7 +66,7 @@ items that require confirmation from the Themes Team before submission.
 - Low-stock messaging based only on WooCommerce inventory.
 - Sale countdowns, shown only when a real scheduled sale end exists.
 - Guest wishlist stored in the visitor's browser, with a saved-item count beside the existing header cart controls.
-  Enable **Browser wishlist** under WooCommerce → Purple Optimize → Storefront.
+  Enable **Browser wishlist** under WooCommerce → ConvertSell → Storefront.
   The toolkit reuses a published shortcode page or creates a native Wishlist page
   when an administrator enables the feature. Promotion strip is a separate switch.
 - Free-shipping progress based on the configured threshold and live cart subtotal.
@@ -121,28 +121,30 @@ matrix and the remaining merchant-content or gateway dependencies.
 
 ## Installation
 
-Install the parent theme, child theme, and plugin in that order. Activate
-`Purple Optimize`, then activate `Purple Optimize Toolkit`.
+For existing Purple Optimize installations, follow the [ConvertSell migration guide](docs/convertsell-migration.md) before switching packages. Existing toolkit settings and legacy shortcodes remain supported.
 
-Requirements: WordPress 6.7 or newer, PHP 7.4 or newer, and WooCommerce.
+Install the parent theme, child theme, and plugin in that order. Activate
+`ConvertSell`, then activate `ConvertSell Toolkit`.
+
+Requirements: WordPress 7.1+, PHP 7.4+, and WooCommerce 11.1+.
 
 After activation, open the toolkit settings at **WP Admin → WooCommerce →
-Purple Optimize**. The direct admin path is
-`/wp-admin/admin.php?page=purple-optimize`. The menu is available to
+ConvertSell**. The direct admin path is
+`/wp-admin/admin.php?page=convertsell`. The menu is available to
 Administrators and Shop Managers with the `manage_woocommerce` capability. If
-it is missing, confirm that both WooCommerce and Purple Optimize Toolkit are
+it is missing, confirm that both WooCommerce and ConvertSell Toolkit are
 active.
 
-Use `[purple_optimize_wishlist]` on a page to render the browser wishlist.
+Use `[convertsell_wishlist]` on a page to render the browser wishlist.
 
 ### Setup and settings workspace
 
-Open **Appearance → Purple Optimize setup** after activating the child theme.
+Open **Appearance → ConvertSell setup** after activating the child theme.
 It checks requirements and offers an explicit companion install/activate action.
 Until a GitHub release is published, build/download the separate toolkit ZIP and
 upload it through **Plugins → Add New**. No plugin is silently downloaded.
 
-**WooCommerce → Purple Optimize** now uses a persistent sidebar with a guided
+**WooCommerce → ConvertSell** now uses a persistent sidebar with a guided
 Overview and sections for Storefront, Product pages, Cart & checkout, Offers and
 Social proof. Saves preserve settings in other sections. Offers include a saved,
 catalog-backed preview. Design editing stays in the Site Editor.
@@ -153,7 +155,7 @@ WordPress.org listing is planned; the toolkit is currently distributed from this
 
 ### One-click upsell/downsell switch
 
-Under **WooCommerce → Purple Optimize → Upsell and downsell offers**, use
+Under **WooCommerce → ConvertSell → Upsell and downsell offers**, use
 **Enable upsell / downsell**. Checking or unchecking saves immediately, with a
 visible saved confirmation. It controls all three funnel placements without
 clearing product, discount, countdown, or placement settings and does not change
@@ -163,7 +165,7 @@ Without JavaScript, the checkbox can still be saved with **Save Changes**.
 
 ### Checkout add-ons and helpful content
 
-In **WooCommerce → Purple Optimize**, open **Cart & checkout → Checkout add-ons and helpful
+In **WooCommerce → ConvertSell**, open **Cart & checkout → Checkout add-ons and helpful
 content**. This section has its own **Save checkout features** button.
 
 - Enable up to four independent add-ons above the native **Place order** button.
@@ -245,7 +247,7 @@ This example does not create a site-specific post or change merchant settings.
 
 ## Reviews & testimonials
 
-Open **WooCommerce → Purple Optimize → Social proof**. Recent-purchase settings
+Open **WooCommerce → ConvertSell → Social proof**. Recent-purchase settings
 remain in their existing section; **Reviews & testimonials** is an independent
 shortcode configurator, with no global save or automatic placement.
 
@@ -262,7 +264,7 @@ reviews are unchanged. This version reuses native reviews and does not scrape ex
 
 Example (replace IDs with your own):
 
-`[purple_optimize_reviews source="products" products="22,18" limit="2" layout="list" author="anonymous"]`
+`[convertsell_reviews source="products" products="22,18" limit="2" layout="list" author="anonymous"]`
 
 For specific reviews use `source="reviews" review_ids="101,102"`. Rotators use
 `layout="rotator"`; autoplay is off by default (`autoplay="0"`). Optional autoplay

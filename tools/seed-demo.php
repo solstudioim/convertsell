@@ -1,10 +1,10 @@
 <?php
 /**
- * Seed the local Purple Optimize demonstration store.
+ * Seed the local ConvertSell demonstration store.
  *
  * Run with: wp eval-file tools/seed-demo.php
  *
- * @package PurpleOptimize
+ * @package ConvertSell
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -279,11 +279,11 @@ if ( ! $demo_orders && $beanie ) {
 		$demo_order->set_billing_first_name( 'James' );
 		$demo_order->set_billing_last_name( 'Demo' );
 		$demo_order->set_billing_email( 'james@example.test' );
-		$demo_order->set_created_via( 'purple-optimize-demo' );
+		$demo_order->set_created_via( 'convertsell-demo' );
 		$demo_order->set_date_created( time() - ( 2 * HOUR_IN_SECONDS ) );
 		$demo_order->update_meta_data( '_pot_demo_order', '1' );
 		$demo_order->calculate_totals();
-		$demo_order->set_status( 'completed', 'Local Purple Optimize demonstration order.' );
+		$demo_order->set_status( 'completed', 'Local ConvertSell demonstration order.' );
 		$demo_order->save();
 	}
 }
@@ -311,7 +311,7 @@ if ( ! $wishlist ) {
 			'post_status'  => 'publish',
 			'post_title'   => 'Wishlist',
 			'post_name'    => 'wishlist',
-			'post_content' => '<!-- wp:shortcode -->[purple_optimize_wishlist]<!-- /wp:shortcode -->',
+			'post_content' => '<!-- wp:shortcode -->[convertsell_wishlist]<!-- /wp:shortcode -->',
 		)
 	);
 }
@@ -319,14 +319,14 @@ if ( ! $wishlist ) {
 $shipping_page = pot_seed_page( 'shipping-returns', 'Shipping & Returns', '<h2>Demo shipping policy</h2><p>Standard delivery costs $8. Orders reaching $75 qualify for the configured free-shipping method. Delivery timing and destination eligibility are confirmed at checkout.</p><h2>Demo returns policy</h2><p>This local demonstration accepts unused items in original condition within 30 days. A real merchant must replace this text with its applicable process, exclusions, costs, and statutory rights before launch.</p>' );
 $privacy_page  = pot_seed_page( 'privacy-policy', 'Privacy Policy', '<p>This local demonstration stores only the data needed to test WordPress and WooCommerce. It is not a production privacy notice. A real merchant must document its controllers, purposes, legal bases, retention, processors, and customer rights.</p>' );
 $terms_page    = pot_seed_page( 'terms-conditions', 'Terms & Conditions', '<p>These are local demonstration terms only. Prices, inventory, discounts, products, and orders on this site are test data and do not form a real-world sale.</p>' );
-pot_seed_page( 'about', 'About', '<p>Purple Optimize is a local demonstration storefront built on WooCommerce and the Purple theme. Replace this page with the merchant story, sourcing evidence, and contact details before launch.</p>' );
+pot_seed_page( 'about', 'About', '<p>ConvertSell is a local demonstration storefront built on WooCommerce and the Purple theme. Replace this page with the merchant story, sourcing evidence, and contact details before launch.</p>' );
 pot_seed_page( 'contact', 'Contact Us', '<p>Demo support hours: Monday to Friday, 10:00–17:00. This local site does not send messages; a production merchant must add a monitored contact channel.</p>' );
 pot_seed_page( 'faqs', 'Frequently Asked Questions', '<h2>When will my order arrive?</h2><p>Available delivery methods and costs are shown at checkout.</p><h2>Can I return an item?</h2><p>See the Shipping & Returns page for the local demonstration policy.</p>' );
 pot_seed_page( 'journal', 'Journal', '<p>Product care, materials, sizing, and store updates can be published here.</p>' );
 update_option( 'wp_page_for_privacy_policy', $privacy_page );
 update_option( 'woocommerce_terms_page_id', $terms_page );
 
-update_option( 'blogname', 'Purple Optimize Store' );
+update_option( 'blogname', 'ConvertSell Store' );
 update_option( 'blogdescription', 'A local conversion-focused WooCommerce demonstration' );
 update_option( 'woocommerce_currency', 'USD' );
 update_option( 'woocommerce_coming_soon', 'no' );
@@ -356,7 +356,7 @@ if ( ! $coupon_id ) {
 	$coupon->set_code( 'WELCOME10' );
 	$coupon->set_discount_type( 'percent' );
 	$coupon->set_amount( 10 );
-	$coupon->set_description( 'Local Purple Optimize demo coupon.' );
+	$coupon->set_description( 'Local ConvertSell demo coupon.' );
 	$coupon->save();
 }
 
@@ -386,4 +386,4 @@ delete_transient( 'pot_recent_purchases_30_names' );
 flush_rewrite_rules();
 wc_delete_product_transients();
 
-WP_CLI::success( 'Purple Optimize demo content is ready.' );
+WP_CLI::success( 'ConvertSell demo content is ready.' );

@@ -1,25 +1,25 @@
-=== Purple Optimize Toolkit ===
+=== ConvertSell Toolkit ===
 Contributors: solstudioim
 Tags: woocommerce, checkout, upsell, wishlist
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 0.11.10
+Stable tag: 0.12.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Optional conversion features and guided settings for the Purple Optimize WooCommerce child theme.
+Optional conversion features and guided settings for the ConvertSell WooCommerce child theme.
 
 == Description ==
 
 Manage promotions, product guidance, a browser wishlist, cart and checkout helpers,
 optional upsell/downsell offers, checkout add-ons, and merchant-authored helpful content.
-The settings workspace lives under WooCommerce > Purple Optimize, with a guided
+The settings workspace lives under WooCommerce > ConvertSell, with a guided
 Overview, local version checks, and sections for each part of the shopping journey.
 
 Requires WooCommerce 11.1 or newer. The tested theme pairing is Purple 1.0.3+
-and Purple Optimize 0.6.0+. Other themes require their own storefront verification.
+and ConvertSell 0.7.0+. Other themes require their own storefront verification.
 
 Existing CRO feature defaults remain enabled on fresh installations. Parent colors,
 typography and native commerce controls remain inherited; existing choices are preserved.
@@ -34,26 +34,26 @@ orders; names must remain off unless the merchant has an appropriate privacy bas
 No external analytics service is used. Offers never silently recharge an order;
 after-purchase acceptance starts a separate checkout and order.
 
-Local preview 0.11.10 is unpublished. Upload the local ZIP for testing; do not use
+Local preview 0.12.0 is unpublished. Upload the local ZIP for testing; do not use
 the child setup download action until the matching GitHub asset is published.
 Older Purple versions show a recommendation, without blocking toolkit installation.
 
 == Installation ==
 
 1. Install and activate WooCommerce 11.1+ on WordPress 7.1+ and PHP 7.4+.
-2. Upload purple-optimize-toolkit-0.11.10.zip under Plugins > Add New > Upload Plugin.
-3. Activate the toolkit, then open WooCommerce > Purple Optimize.
+2. Upload convertsell-toolkit-0.12.0.zip under Plugins > Add New > Upload Plugin.
+3. Activate the toolkit, then open WooCommerce > ConvertSell.
 4. Review compatibility checks and settings. Existing choices are preserved.
 
 The toolkit and child theme are distributed as separate GitHub release packages:
-https://github.com/solstudioim/purple-cro-optimized/releases
+https://github.com/solstudioim/convertsell/releases
 This plugin is not currently listed on WordPress.org. This readme prepares its
 metadata for a future submission; it does not imply directory approval.
 
 == Frequently Asked Questions ==
 
 = Does installing the theme silently install the toolkit? =
-No. Appearance > Purple Optimize setup offers an explicit installation/activation
+No. Appearance > ConvertSell setup offers an explicit installation/activation
 action using the versioned GitHub release package. ZIP upload is also supported.
 
 = How do updates work before WordPress.org listing? =
@@ -71,6 +71,12 @@ Save checkout features action. The offer enable/disable switch saves immediately
 and restores the previous state if saving fails. Settings in other sections are retained.
 
 == Changelog ==
+
+= 0.12.0 =
+* Rename the companion to ConvertSell Toolkit and its distribution to convertsell-toolkit.
+* Add convertsell_wishlist and convertsell_reviews shortcodes; retain published legacy aliases.
+* Preserve existing settings, checkout documents, sessions, wishlist storage and checkout block names.
+* Reject activation alongside the legacy toolkit to avoid loading the runtime twice.
 
 = 0.11.10 =
 * Match add-on card savings labels and regular-price comparisons with native WooCommerce order summaries.
@@ -94,7 +100,7 @@ and restores the previous state if saving fails. Settings in other sections are 
 * Support the reviews shortcode in helpful checkout content without enabling unrelated shortcodes.
 
 = 0.11.5 =
-* Restore native mini-cart opening after add to cart for the Purple Optimize child.
+* Restore native mini-cart opening after add to cart for the ConvertSell child.
 * Preserve explicit block behavior choices without replacing parent templates or styling.
 
 = 0.11.4 =

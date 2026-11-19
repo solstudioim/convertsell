@@ -12,7 +12,7 @@ const wp = (code) => execFileSync(process.env.POT_PHP || 'php', ['-d', 'error_re
 const site = wp('echo home_url();');
 assert.match(new URL(site).hostname, /(^localhost$|^127\.0\.0\.1$|\.(test|localhost)$)/);
 mkdirSync(artifactRoot, { recursive: true });
-const pluginPath = path.join(root, 'wp-content/plugins/purple-optimize-toolkit');
+const pluginPath = path.join(root, 'wp-content/plugins/convertsell-toolkit');
 const backup = path.join(artifactRoot, 'toolkit-before-setup');
 assert.ok(!existsSync(backup), 'Remove or relocate the previous setup backup before rerunning.');
 const muDir = path.join(root, 'wp-content/mu-plugins');
@@ -26,7 +26,7 @@ const zipBase64 = Buffer.from(fixtureZip).toString('base64');
 writeFileSync(fixturePath, `<?php
 // Test-only: exercise WordPress's real ZIP installer using a local release package.
 add_filter('upgrader_pre_download', static function($reply,$package){
- if ($package !== 'https://github.com/solstudioim/purple-cro-optimized/releases/download/v0.6.0/purple-optimize-toolkit-0.11.10.zip') return $reply;
+ if ($package !== 'https://github.com/solstudioim/convertsell/releases/download/v0.7.0/convertsell-toolkit-0.12.0.zip') return $reply;
  if (!get_option('pot_setup_fixture_allow')) return new WP_Error('simulated_unavailable','Test package unavailable');
  return base64_decode('${zipBase64}');
 },10,2);
@@ -37,23 +37,23 @@ const page = await context.newPage();
 page.setDefaultTimeout(20000);
 let moved = false;
 try {
-	wp('require_once ABSPATH."wp-admin/includes/plugin.php"; deactivate_plugins("purple-optimize-toolkit/purple-optimize-toolkit.php");');
+	wp('require_once ABSPATH."wp-admin/includes/plugin.php"; deactivate_plugins("convertsell-toolkit/convertsell-toolkit.php");');
 	renameSync(pluginPath, backup); moved = true;
 	await page.goto(`${site}/wp-login.php`);
 	await page.locator('#user_login').fill(process.env.POT_TEST_USER || 'compat');
 	await page.locator('#user_pass').fill(process.env.POT_TEST_PASSWORD || 'local-development-only');
 	await Promise.all([page.waitForURL((url) => !url.pathname.endsWith('wp-login.php')), page.locator('#wp-submit').click()]);
-	const setup = `${site}/wp-admin/themes.php?page=purple-optimize-setup`;
+	const setup = `${site}/wp-admin/themes.php?page=convertsell-setup`;
 	await page.goto(setup);
 	const install = page.getByRole('button', { name: 'Install and activate companion toolkit', exact: true });
 	await install.waitFor();
 	assert.equal(existsSync(pluginPath), false, 'Visiting setup must never install a plugin.');
-	const invalid = await context.request.post(`${site}/wp-admin/admin-post.php`, { form: { action: 'purple_optimize_setup_companion', _wpnonce: 'invalid' } });
+	const invalid = await context.request.post(`${site}/wp-admin/admin-post.php`, { form: { action: 'convertsell_setup_companion', _wpnonce: 'invalid' } });
 	assert.equal(invalid.status(), 403);
-	const get = await context.request.get(`${site}/wp-admin/admin-post.php?action=purple_optimize_setup_companion`);
+	const get = await context.request.get(`${site}/wp-admin/admin-post.php?action=convertsell_setup_companion`);
 	assert.equal(get.status(), 405);
 	const guest = await browser.newContext();
-	const denied = await guest.request.post(`${site}/wp-admin/admin-post.php`, { form: { action: 'purple_optimize_setup_companion' } });
+	const denied = await guest.request.post(`${site}/wp-admin/admin-post.php`, { form: { action: 'convertsell_setup_companion' } });
 	assert.equal(denied.status(), 400);
 	await guest.close();
 	// Shop managers may configure the toolkit, but may not install plugins.
@@ -64,7 +64,7 @@ try {
 	await manager.locator('#user_login').fill('pot_setup_manager');
 	await manager.locator('#user_pass').fill('local-manager-only');
 	await Promise.all([manager.waitForURL((url) => !url.pathname.endsWith('wp-login.php')), manager.locator('#wp-submit').click()]);
-	const forbidden = await managerContext.request.post(`${site}/wp-admin/admin-post.php`, { form: { action: 'purple_optimize_setup_companion' } });
+	const forbidden = await managerContext.request.post(`${site}/wp-admin/admin-post.php`, { form: { action: 'convertsell_setup_companion' } });
 	assert.equal(forbidden.status(), 403);
 	await managerContext.close();
 	// First simulate a missing GitHub package, then use the actual locally built ZIP.
@@ -72,27 +72,27 @@ try {
 	await page.getByText(/Installation could not finish/).waitFor();
 	assert.equal(existsSync(pluginPath), false, 'Failed installation must remain retryable.');
 	wp('update_option("pot_setup_fixture_allow",1);');
-	await Promise.all([page.waitForURL('**/admin.php?page=purple-optimize'), install.click()]);
+	await Promise.all([page.waitForURL('**/admin.php?page=convertsell'), install.click()]);
 	await page.getByRole('heading', { name: 'Compatibility checks' }).waitFor();
-	assert.equal(wp('echo is_plugin_active("purple-optimize-toolkit/purple-optimize-toolkit.php") ? "yes" : "no";'), 'yes');
+	assert.equal(wp('echo is_plugin_active("convertsell-toolkit/convertsell-toolkit.php") ? "yes" : "no";'), 'yes');
 	assert.equal(wp('echo base64_encode(serialize(get_option("pot_settings")));'), saved, 'Installing/activating must preserve existing settings.');
 	await page.goto(setup);
 	await page.getByRole('link', { name: 'Open toolkit settings' }).waitFor();
 	await page.screenshot({ path: path.join(artifactRoot, 'installed.png'), fullPage: true });
 	// An installed inactive toolkit uses activation only; no download is needed.
-	wp('deactivate_plugins("purple-optimize-toolkit/purple-optimize-toolkit.php"); delete_option("pot_setup_fixture_allow");');
+	wp('deactivate_plugins("convertsell-toolkit/convertsell-toolkit.php"); delete_option("pot_setup_fixture_allow");');
 	await page.reload();
-	await Promise.all([page.waitForURL('**/admin.php?page=purple-optimize'), page.getByRole('button', { name: 'Activate companion toolkit', exact: true }).click()]);
-	assert.equal(wp('echo is_plugin_active("purple-optimize-toolkit/purple-optimize-toolkit.php") ? "yes" : "no";'), 'yes');
+	await Promise.all([page.waitForURL('**/admin.php?page=convertsell'), page.getByRole('button', { name: 'Activate companion toolkit', exact: true }).click()]);
+	assert.equal(wp('echo is_plugin_active("convertsell-toolkit/convertsell-toolkit.php") ? "yes" : "no";'), 'yes');
 	// An outdated installed copy is never overwritten or activated by setup.
-	wp('deactivate_plugins("purple-optimize-toolkit/purple-optimize-toolkit.php");');
-	const mainFile = path.join(pluginPath, 'purple-optimize-toolkit.php');
-	writeFileSync(mainFile, readFileSync(mainFile, 'utf8').replace('Version: 0.11.10', 'Version: 0.9.0'));
+	wp('deactivate_plugins("convertsell-toolkit/convertsell-toolkit.php");');
+	const mainFile = path.join(pluginPath, 'convertsell-toolkit.php');
+	writeFileSync(mainFile, readFileSync(mainFile, 'utf8').replace('Version: 0.12.0', 'Version: 0.9.0'));
 	await page.goto(setup);
-	await page.getByText(/Update the installed toolkit to 0.11.10/).waitFor();
+	await page.getByText(/Update the installed toolkit to 0.12.0/).waitFor();
 	assert.equal(await page.getByRole('button', { name: 'Activate companion toolkit', exact: true }).count(), 0);
 	// The screen deliberately offers upload rather than activation for an old copy.
-	assert.equal(wp('echo is_plugin_active("purple-optimize-toolkit/purple-optimize-toolkit.php") ? "yes" : "no";'), 'no');
+	assert.equal(wp('echo is_plugin_active("convertsell-toolkit/convertsell-toolkit.php") ? "yes" : "no";'), 'no');
 	console.log('PASS: no automatic installation, invalid nonce and GET rejected, guest/shop-manager denied, outdated copy guarded, failed package retry, real ZIP installation, activation read-back, settings preservation, installed-inactive activation.');
 } finally {
 	rmSync(fixturePath, { force: true });
@@ -101,7 +101,7 @@ try {
 	if (moved) {
 		rmSync(pluginPath, { force: true, recursive: true });
 		renameSync(backup, pluginPath);
-		wp('activate_plugin("purple-optimize-toolkit/purple-optimize-toolkit.php");');
+		wp('activate_plugin("convertsell-toolkit/convertsell-toolkit.php");');
 	}
 	await browser.close();
 }

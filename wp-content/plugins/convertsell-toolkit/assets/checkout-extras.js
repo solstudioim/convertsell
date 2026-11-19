@@ -6,7 +6,7 @@
 	const { __, sprintf } = wp.i18n;
 	const { registerCheckoutBlock, extensionCartUpdate } = wc.blocksCheckout;
 	const { CART_STORE_KEY } = wc.wcBlocksData;
-	const domain = 'purple-optimize-toolkit';
+	const domain = 'convertsell-toolkit';
 
 	function useCheckoutExtras() {
 		return useSelect((select) => select(CART_STORE_KEY).getCartData().extensions?.['purple-checkout'] || {}, []);

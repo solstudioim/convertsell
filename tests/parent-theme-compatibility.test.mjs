@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const parent = path.join(root, 'wp-content/themes/purple');
-const child = path.join(root, 'wp-content/themes/purple-optimize');
+const child = path.join(root, 'wp-content/themes/convertsell');
 const files = (directory) => fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
 	const name = path.join(directory, entry.name);
 	return entry.isDirectory() ? files(name) : [name];

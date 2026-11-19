@@ -61,6 +61,9 @@ try {
 	$ran = false;
 	add_shortcode( 'pot_forbidden', static function () use ( &$ran ) { $ran = true; return 'FORBIDDEN'; } );
 	$shortcode = pot_reviews_build_shortcode( pot_reviews_config( array( 'source' => 'products', 'products' => (string) $fixture['public'], 'layout' => 'rotator' ) ) );
+	$legacy_shortcode = str_replace( '[convertsell_reviews', '[purple_optimize_reviews', $shortcode );
+	$expect( do_shortcode( $shortcode ) === do_shortcode( $legacy_shortcode ), 'New and legacy reviews must render the same eligible records.' );
+	$expect( pot_reviews_checkout_shortcodes( $shortcode ) === pot_reviews_checkout_shortcodes( $legacy_shortcode ), 'Restricted checkout must continue to allow published legacy reviews.' );
 	$doc = wp_insert_post( array( 'post_type' => 'pot_checkout_info', 'post_status' => 'publish', 'post_title' => 'Review checkout fixture', 'post_content' => '<!-- wp:group --><div class="wp-block-group"><!-- wp:shortcode -->' . $shortcode . '[pot_forbidden]<!-- /wp:shortcode --></div><!-- /wp:group -->' ) );
 	$fixture['posts'][] = $doc;
 	$fixture['document'] = $doc;

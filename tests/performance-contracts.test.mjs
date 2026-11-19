@@ -7,23 +7,23 @@ import { fileURLToPath } from 'node:url';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const toolkitSource = fs.readFileSync(
-	path.join(repositoryRoot, 'wp-content/plugins/purple-optimize-toolkit/assets/toolkit.js'),
+	path.join(repositoryRoot, 'wp-content/plugins/convertsell-toolkit/assets/toolkit.js'),
 	'utf8'
 );
 const toolkitPhp = fs.readFileSync(
-	path.join(repositoryRoot, 'wp-content/plugins/purple-optimize-toolkit/purple-optimize-toolkit.php'),
+	path.join(repositoryRoot, 'wp-content/plugins/convertsell-toolkit/includes/runtime.php'),
 	'utf8'
 );
 const themeFunctions = fs.readFileSync(
-	path.join(repositoryRoot, 'wp-content/themes/purple-optimize/functions.php'),
+	path.join(repositoryRoot, 'wp-content/themes/convertsell/functions.php'),
 	'utf8'
 );
 const themeJson = fs.readFileSync(
-	path.join(repositoryRoot, 'wp-content/themes/purple-optimize/theme.json'),
+	path.join(repositoryRoot, 'wp-content/themes/convertsell/theme.json'),
 	'utf8'
 );
 const themeCss = fs.readFileSync(
-	path.join(repositoryRoot, 'wp-content/themes/purple-optimize/style.css'),
+	path.join(repositoryRoot, 'wp-content/themes/convertsell/style.css'),
 	'utf8'
 );
 const importerSource = fs.readFileSync(

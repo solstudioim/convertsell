@@ -6,7 +6,7 @@
 	"category": "woocommerce",
 	"parent": ["woocommerce/checkout-totals-block"],
 	"supports": {"inserter": false, "html": false, "multiple": false},
-	"textdomain": "purple-optimize-toolkit",
+	"textdomain": "convertsell-toolkit",
 	"viewScript": "pot-checkout-extras",
 	"style": ["pot-checkout-extras", "pot-checkout-content"],
 	"render": "file:./render.php"

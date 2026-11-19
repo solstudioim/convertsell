@@ -31,7 +31,7 @@ test('demo page exposes an accessible non-autoplay video', () => {
 });
 
 test('demo page links the project and canonical Woo Purple source', () => {
-  assert.match(page, /https:\/\/github\.com\/solstudioim\/purple-cro-optimized/);
+  assert.match(page, /https:\/\/github\.com\/solstudioim\/convertsell/);
   assert.match(page, /https:\/\/github\.com\/woocommerce\/woocommerce\/tree\/trunk\/themes\/purple/);
   assert.doesNotMatch(page, /WordPress\.com repository/i);
 });
@@ -92,7 +92,7 @@ test('storyboard text alternative mirrors the 18-frame demo sequence', () => {
   assert.equal(items.length, 18, 'expected one text-alternative item per video frame');
 
   const requiredSequence = [
-    'Purple CRO Optimized',
+    'ConvertSell',
     'discovery, trust, and product hierarchy',
     'catalog navigation',
     'focused purchase surface',

@@ -40,12 +40,12 @@ try {
  for (const width of [1440,390]) {
   await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
   for (const [name, url] of [['home',site],['shop',`${site}/shop/`],['product',product.url],['cart',`${site}/cart/`],['checkout',`${site}/checkout/`]]) {
-   wp('deactivate_plugins("purple-optimize-toolkit/purple-optimize-toolkit.php"); switch_theme("purple");');
+   wp('deactivate_plugins("convertsell-toolkit/convertsell-toolkit.php"); switch_theme("purple");');
    const parent = await capture(url, `parent-${name}-${width}`);
-   wp('switch_theme("purple-optimize"); activate_plugin("purple-optimize-toolkit/purple-optimize-toolkit.php");');
+   wp('switch_theme("convertsell"); activate_plugin("convertsell-toolkit/convertsell-toolkit.php");');
    const child = await capture(url, `child-${name}-${width}`);
    assert.deepEqual(child, parent, `${name} at ${width}px changed parent presentation`);
-   assert.equal(await page.locator('link#purple-optimize-toolkit-css,script#purple-optimize-toolkit-js').count(), 0, 'Disabled features must load no toolkit bundle');
+   assert.equal(await page.locator('link#convertsell-toolkit-css,script#convertsell-toolkit-js').count(), 0, 'Disabled features must load no toolkit bundle');
    results.push({ route: name, width, parentPresentation: 'identical', toolkitBundle: 'absent' });
   }
  }

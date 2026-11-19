@@ -1,8 +1,8 @@
-# Purple CRO Optimized feature audit
+# ConvertSell feature audit
 
 Audit date: 2026-08-09
 
-Purple CRO Optimized combines common ecommerce conversion patterns with the
+ConvertSell combines common ecommerce conversion patterns with the
 [Baymard 16-item CRO framework](https://baymard.com/learn/ecommerce-cro).
 “Implemented foundation” means the theme or companion plugin supplies the
 behavior; it does not claim a guaranteed conversion lift for every audience.
@@ -31,7 +31,7 @@ behavior; it does not claim a guaranteed conversion lift for every audience.
 
 ## Baymard 16-item CRO framework
 
-| # | Baymard recommendation | Status | Purple CRO Optimized implementation |
+| # | Baymard recommendation | Status | ConvertSell implementation |
 | --- | --- | --- | --- |
 | 1 | Optimize the ecommerce checkout process | Implemented foundation | Focused guest checkout, progress guidance, shipping threshold, one native completion action, and configurable passive/pre/post-purchase offers. The forced pre-checkout mode remains optional and should be tested against the direct flow. |
 | 2 | Add trust signals | Implemented foundation | Factual checkout guidance, configured policy links, returns information, and SSL-aware language without fabricated seals. |

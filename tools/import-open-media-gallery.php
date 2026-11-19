@@ -8,7 +8,7 @@
  * search rankings change. API metadata is re-read at import time and retained
  * on every attachment for attribution and auditability.
  *
- * @package PurpleOptimize
+ * @package ConvertSell
  */
 
 defined( 'ABSPATH' ) || exit;

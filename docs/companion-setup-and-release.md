@@ -1,4 +1,8 @@
-> Local preview: child 0.6.0 and toolkit 0.11.10 are unpublished. Upload both locally built ZIPs manually for testing. The previous released flow below describes 0.5.14; do not publish a tag until local review is complete.
+> Current rename candidate: ConvertSell 0.7.0 and ConvertSell Toolkit 0.12.0.
+> See [migration instructions](convertsell-migration.md). No tag or release asset
+> has been published by this source change. The historical setup flow below
+> describes the earlier 0.5.14 distribution.
+
 
 # Companion setup, settings and releases
 
@@ -9,18 +13,18 @@ the experimental WooCommerce React Settings UI feature flag.
 
 ## Merchant flow
 
-1. Install Purple and the Purple Optimize 0.5.14 child theme on WordPress
+1. Install Purple and the ConvertSell 0.5.14 child theme on WordPress
    7.1+, PHP 7.4+, and WooCommerce 11.1+.
-2. Open **Appearance → Purple Optimize setup**. Local requirements are checked
+2. Open **Appearance → ConvertSell setup**. Local requirements are checked
    automatically; viewing the screen never downloads or activates a plugin.
 3. Choose **Install and activate companion toolkit**. The action downloads the
-   fixed `v0.5.14/purple-optimize-toolkit-0.10.0.zip` release asset from this repo.
+   fixed `v0.5.14/convertsell-toolkit-0.10.0.zip` release asset from this repo.
    If no release is published or filesystem permissions prevent installation,
    download/build the separate ZIP and use **Plugins → Add New → Upload Plugin**.
 4. If a supported toolkit is installed but inactive, the action activates it
    without downloading another copy. Older installed copies must be updated by
    ZIP upload; this flow never overwrites them or resets their settings.
-5. Review **WooCommerce → Purple Optimize → Overview**, then follow its links
+5. Review **WooCommerce → ConvertSell → Overview**, then follow its links
    to Storefront, Product pages, Cart & checkout, Offers and Social proof.
 
 A section save changes only settings owned by that section. Checkout add-ons and
@@ -47,7 +51,7 @@ python3 tools/build-packages.py
 ```
 
 The default output is the resolved local directory
-`/Users/sol/Codex/artifacts/purple-cro-optimized/releases/`. The script packages the
+`/Users/sol/Codex/artifacts/convertsell/releases/`. The script packages the
 current working tree, including uncommitted edits, into two independent installable
 ZIPs and writes `packages.json` with SHA256 hashes. The theme never bundles the
 plugin. Environment files, tests and repository metadata are outside both packages.

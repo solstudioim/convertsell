@@ -9,8 +9,8 @@ $expect = static function ( $condition, $message ) {
 	}
 };
 $expect( function_exists( 'pot_render_workspace' ), 'Companion plugin must be active.' );
-$expect( 'purple-optimize' === get_stylesheet() && 'purple' === get_template(), 'Activate the child with its parent for combined checks.' );
-$expect( purple_optimize_environment_ready( pot_environment_checks() ), 'Combined version requirements must pass.' );
+$expect( 'convertsell' === get_stylesheet() && 'purple' === get_template(), 'Activate the child with its parent for combined checks.' );
+$expect( convertsell_environment_ready( pot_environment_checks() ), 'Combined version requirements must pass.' );
 $original = get_option( 'pot_settings', null );
 $checkout = get_option( 'pot_checkout_settings', null );
 $post     = $_POST;

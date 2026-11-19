@@ -1,6 +1,6 @@
 # Checkout extras — 0.8.0 verification
 
-Verified 2026-09-04 on local `http://purple-optimize.test` with WordPress 7.1,
+Verified 2026-09-04 on local `http://convertsell.test` with WordPress 7.1,
 WooCommerce 11.0.0, PHP 8.4 serving HTTP, PHP 8.1 for integration checks, and
 headless Chromium. The existing pre-checkout upsell/downsell funnel remained enabled.
 

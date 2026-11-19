@@ -19,7 +19,8 @@ jobs:
       - run: node --test tests/*.test.mjs
       - run: php tests/storefront-presentation-contracts.php
       - run: php tests/parent-version-advisory.php
-      - run: find wp-content/themes/purple wp-content/themes/purple-optimize wp-content/plugins/purple-optimize-toolkit -name '*.php' -print0 | xargs -0 -n1 php -l
+      - run: php tests/convertsell-duplicate-runtime.php
+      - run: find wp-content/themes/purple wp-content/themes/convertsell wp-content/plugins/convertsell-toolkit -name '*.php' -print0 | xargs -0 -n1 php -l
       - run: git diff --check
       - run: python3 tools/build-packages.py --output "$RUNNER_TEMP/packages"
       - uses: actions/upload-artifact@v4
@@ -56,12 +57,13 @@ jobs:
           wp core download --path="$RUNNER_TEMP/site" --version=7.1
           wp config create --path="$RUNNER_TEMP/site" --dbname=wordpress --dbuser=root --dbpass=wordpress --dbhost=127.0.0.1
           wp core install --path="$RUNNER_TEMP/site" --url=http://localhost:8888 --title=Compatibility --admin_user=compat --admin_password=local-test-only --admin_email=compat@example.test --skip-email
-          cp -R wp-content/themes/purple wp-content/themes/purple-optimize "$RUNNER_TEMP/site/wp-content/themes/"
-          cp -R wp-content/plugins/purple-optimize-toolkit "$RUNNER_TEMP/site/wp-content/plugins/"
+          cp -R wp-content/themes/purple wp-content/themes/convertsell "$RUNNER_TEMP/site/wp-content/themes/"
+          cp -R wp-content/plugins/convertsell-toolkit "$RUNNER_TEMP/site/wp-content/plugins/"
           if [ "$WOO_VERSION" = latest ]; then wp plugin install woocommerce --activate --path="$RUNNER_TEMP/site"; else wp plugin install woocommerce --version="$WOO_VERSION" --activate --path="$RUNNER_TEMP/site"; fi
           if [ "$WOO_VERSION" = "11.2.1" ]; then wp plugin install gutenberg --version=24.3.0 --activate --path="$RUNNER_TEMP/site"; fi
-          wp theme activate purple-optimize --path="$RUNNER_TEMP/site"
-          wp plugin activate purple-optimize-toolkit --path="$RUNNER_TEMP/site"
+          wp theme activate convertsell --path="$RUNNER_TEMP/site"
+          wp plugin activate convertsell-toolkit --path="$RUNNER_TEMP/site"
+          wp eval-file tests/convertsell-rename-integration.php --path="$RUNNER_TEMP/site"
           wp eval-file tests/companion-settings-integration.php --path="$RUNNER_TEMP/site"
           wp eval-file tests/checkout-discounts-integration.php --path="$RUNNER_TEMP/site"
           wp eval-file tests/checkout-extras-integration.php --path="$RUNNER_TEMP/site"
@@ -104,7 +106,7 @@ jobs:
           trap - EXIT
           node tests/checkout-content.e2e.mjs
           python3 tools/build-packages.py --output "$RUNNER_TEMP/packages"
-          export POT_TOOLKIT_ZIP="$RUNNER_TEMP/packages/purple-optimize-toolkit-0.11.10.zip"
+          export POT_TOOLKIT_ZIP="$RUNNER_TEMP/packages/convertsell-toolkit-0.12.0.zip"
           export POT_DISPOSABLE_SITE=1
           node tests/companion-setup.e2e.mjs
       - uses: actions/upload-artifact@v4

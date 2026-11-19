@@ -1,11 +1,11 @@
 # Native checkout-content editor — 0.9.0
 
-Verified on 2026-09-04 against the local `purple-optimize.test` installation
+Verified on 2026-09-04 against the local `convertsell.test` installation
 (WordPress 7.1, WooCommerce 11.0.0, Commerce Clarity theme).
 
 ## Implementation
 
-- WooCommerce → Purple Optimize → Checkout add-ons and helpful content →
+- WooCommerce → ConvertSell → Checkout add-ons and helpful content →
   **Open block editor** opens the standard WordPress post editor.
 - A non-public `pot_checkout_info` document uses core editor, media, REST saves,
   autosaves, and revisions. Editing requires `manage_woocommerce` (including shop managers).
