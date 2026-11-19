@@ -1,63 +1,120 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ConvertSell demo</title>
-    <meta name="description" content="A guided overview of the ConvertSell WooCommerce child theme and toolkit.">
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <main>
-      <section class="hero" aria-labelledby="page-title">
-        <p class="eyebrow">ConvertSell</p>
-        <h1 id="page-title">A conversion-focused WooCommerce storefront</h1>
-        <p>Watch the product journey, from discovery to checkout reassurance.</p>
-        <p>This historical video shows the earlier Purple Optimize design. The current ConvertSell build inherits Purple’s styling.</p>
-        <video controls poster="assets/purple-cro-demo-poster.webp">
-          <source src="assets/purple-cro-demo.mp4" type="video/mp4">
-          Your browser does not support HTML video. Use the storyboard below.
-        </video>
-      </section>
-
-      <section aria-labelledby="storyboard-title">
-        <h2 id="storyboard-title">Storyboard text alternative</h2>
-        <ol>
-          <li>ConvertSell opens as a conversion-focused WooCommerce child theme.</li>
-          <li>The home page demonstrates clear discovery, trust, and product hierarchy.</li>
-          <li>A product-led catalog demonstrates focused catalog navigation.</li>
-          <li>A product page keeps one focused purchase surface on screen.</li>
-          <li>A Mobile sticky cart keeps the next step in reach on a narrow screen.</li>
-          <li>Add-to-cart feedback provides an accessible cart confirmation.</li>
-          <li>The Cart summary keeps checkout intent clear.</li>
-          <li>A Pre-checkout upsell is relevant, optional, and easy to decline.</li>
-          <li>The Downsell appears only after the upsell is rejected.</li>
-          <li>The Downsell accepted state updates the cart before checkout.</li>
-          <li>Native WooCommerce checkout keeps contact and delivery enclosed.</li>
-          <li>A Test payment screen presents a clear order action.</li>
-          <li>The Completed order confirmed state appears before any follow-up offer.</li>
-          <li>A Post-purchase offer is an explicit, separate next step.</li>
-          <li>Acceptance starts a separate checkout and leaves the completed order unchanged.</li>
-          <li>Toolkit validation confirms eligible offer products in the admin settings.</li>
-          <li>Warnings flag invalid products before they break the funnel in the admin settings.</li>
-          <li>Built on Woo Purple, the end card identifies the GPL open-source source.</li>
-        </ol>
-      </section>
-
-      <section aria-labelledby="requirements-title">
-        <h2 id="requirements-title">Installation requirements</h2>
-        <p>Install WooCommerce and the Purple parent theme, then activate ConvertSell. ConvertSell Toolkit is optional and adds store functionality.</p>
-        <dl class="versions">
-          <div><dt>Child theme</dt><dd>0.5.12</dd></div>
-          <div><dt>Toolkit</dt><dd>0.7.4</dd></div>
-        </dl>
-      </section>
-
-      <section aria-labelledby="sources-title">
-        <h2 id="sources-title">Project sources</h2>
-        <p><a href="https://github.com/solstudioim/convertsell" rel="noreferrer noopener">ConvertSell on GitHub</a></p>
-        <p><a href="https://github.com/woocommerce/woocommerce/tree/trunk/themes/purple" rel="noreferrer noopener">Woo Purple parent theme source</a></p>
-      </section>
-    </main>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ConvertSell — keep Purple, improve the shopping journey</title>
+  <meta name="description" content="A free child theme for Purple with an optional WooCommerce conversion toolkit. Explore instant search, wishlists, checkout add-ons, reviews and optional offers.">
+  <meta name="theme-color" content="#1f0342">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="announcement">Free and open source. Built on Purple for WooCommerce.</div>
+  <header class="site-header wrap">
+    <a class="wordmark" href="./" aria-label="ConvertSell home">ConvertSell<span aria-hidden="true">↗</span></a>
+    <nav aria-label="Main navigation"><a href="#features">Features</a><a href="#walkthrough">Walkthrough</a><a href="#setup">Get started</a><a href="https://github.com/solstudioim/convertsell">GitHub ↗</a></nav>
+  </header>
+  <main id="main" tabindex="-1">
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">A free child theme + optional conversion toolkit</p>
+        <h1 id="hero-title">Purple’s design.<br>A clearer path<br>to purchase.</h1>
+        <p class="lead">Help shoppers find the right product, buy with confidence, and discover a useful extra. Keep the Purple storefront you already like.</p>
+        <div class="actions"><a class="button" href="https://purplecrodemo.wpcomstaging.com/">Try the live demo ↗</a><a class="button secondary" href="#features">Explore the features</a></div>
+        <p class="hero-note">ConvertSell theme <strong>0.7.0</strong> · Toolkit <strong>0.12.0</strong><br>Independent project by Sol J. Purple is made by Automattic.</p>
+      </div>
+      <figure class="hero-image">
+        <div class="browser-bar" aria-hidden="true"><span></span><span></span><span></span><i>purplecrodemo.wpcomstaging.com</i></div>
+        <a href="assets/screenshots/home.jpg" aria-label="Open the full-size current Purple storefront screenshot"><img src="assets/screenshots/home.jpg" width="1440" height="1000" alt="Current demo storefront with Purple’s white layout, purple buttons, category navigation and knitwear collection." fetchpriority="high"></a>
+        <figcaption>The current storefront, captured from the live demo.</figcaption>
+      </figure>
+    </section>
+    <section class="foundation" aria-labelledby="foundation-title"><div class="wrap foundation-grid">
+      <div><p class="eyebrow">One design foundation. Two separate packages.</p><h2 id="foundation-title">Keep what makes Purple, Purple.</h2></div>
+      <div><p><strong>The child theme</strong> inherits Purple’s templates, colors, typography, product gallery, filters and native cart and checkout. Customize your store in the WordPress Site Editor.</p><p><strong>The optional toolkit</strong> adds conversion features that follow those styles. Enable the features you need and keep control of your promotions, content and offers.</p></div>
+    </div></section>
+    <section id="features" class="section wrap" aria-labelledby="features-title">
+      <div class="section-heading"><p class="eyebrow">From discovery to the next order</p><h2 id="features-title">Make the buying journey easier.</h2><p>Practical features for the moments when a shopper needs a little more clarity.</p></div>
+      <div class="feature-grid">
+        <article><span class="feature-number">01 / Discover</span><h3>Find it. Save it. Come back.</h3><p>Instant product suggestions, category-scoped search, SKU lookup and bounded typo tolerance. A browser wishlist keeps saved products one click away.</p><a href="#discovery">See discovery features →</a></article>
+        <article><span class="feature-number">02 / Decide</span><h3>Give shoppers useful evidence.</h3><p>Real review summaries, featured approved reviews, product guidance and factual sale and stock messages near the purchase decision.</p><a href="#confidence">See confidence features →</a></article>
+        <article><span class="feature-number">03 / Complete</span><h3>Keep the next step clear.</h3><p>Live shipping progress, native cart controls, clear checkout labels and merchant-written helpful content alongside the order summary.</p><a href="#checkout">See checkout features →</a></article>
+        <article><span class="feature-number">04 / Add value</span><h3>Offer a relevant extra.</h3><p>Optional checkout add-ons, product-specific discounts, and configured upsell/downsell offers before checkout, inline or after purchase.</p><a href="#offers">See offer features →</a></article>
+      </div>
+      <div class="feature-details">
+        <details id="discovery" open><summary><span>Discovery &amp; saved products</span><span aria-hidden="true">+</span></summary><ul>
+          <li>Instant product search with keyboard navigation, category scope, SKU lookup and bounded typo tolerance.</li>
+          <li>Browser-based guest wishlist, a dedicated saved-items page and live count beside the native header cart. Saved items stay in that browser.</li>
+          <li>Top-level category navigation, a configurable promotion strip and coupon-code copy button.</li>
+          <li>Promotion background color control with automatic text contrast and a reset to the parent accent.</li>
+        </ul></details>
+        <details id="confidence"><summary><span>Product confidence &amp; honest merchandising</span><span aria-hidden="true">+</span></summary><ul>
+          <li>Real product review averages and counts, a featured approved review, and configurable purchase reassurance.</li>
+          <li>Sale percentages calculated from actual catalog prices; low-stock messages based on WooCommerce inventory.</li>
+          <li>Sale countdowns only when a real sale end is scheduled. Configured offers can have their own discount and duration.</li>
+          <li>Desktop sticky add-to-cart. On mobile, the product sticky bar is hidden; optional sticky controls enhance the native cart and checkout actions.</li>
+          <li>A product-content readiness checklist for images and descriptions, plus policy/footer links.</li>
+        </ul></details>
+        <details id="checkout"><summary><span>Cart, checkout &amp; editable helpful content</span><span aria-hidden="true">+</span></summary><ul>
+          <li>Native mini-cart opening after a product is added, and shipping progress that follows live cart totals.</li>
+          <li>Visible Required/Optional field labels and factual checkout guidance.</li>
+          <li>Publish helpful checkout content with WordPress core blocks: headings, text, images, columns, lists and buttons. Draft content stays hidden.</li>
+          <li>Selected native product reviews in static cards or an accessible rotator. Verified-owner labels follow WooCommerce records; autoplay is optional.</li>
+          <li>Checkout add-ons and helpful content target the WooCommerce Checkout block, rather than the legacy checkout shortcode.</li>
+        </ul></details>
+        <details id="offers"><summary><span>Checkout add-ons, upsells &amp; downsells</span><span aria-hidden="true">+</span></summary><ul>
+          <li>Up to four optional product add-ons above Place order. Nothing is preselected; cart totals update without clearing entered details.</li>
+          <li>Optional percentage discounts on each add-on, with catalog-backed prices, clear savings labels and retained accepted prices.</li>
+          <li>Configured upsell/downsell offers in three placements: full-page before checkout, passive inline before Place order, or after purchase.</li>
+          <li>Offer decisions apply to the current cart and configuration for guests and signed-in shoppers. Changed carts can be reconsidered; accepted offers are not repeatedly added.</li>
+          <li>Post-purchase acceptance starts a separate checkout and order. It does not silently recharge or modify the completed order.</li>
+        </ul></details>
+        <details id="control"><summary><span>Social proof, settings &amp; after purchase</span><span aria-hidden="true">+</span></summary><ul>
+          <li>Recent-purchase proof uses eligible WooCommerce orders. It defaults to off and anonymous; displaying names is a separate privacy choice.</li>
+          <li>Review shortcodes have independent selections, rating filters, attribution choices and previews.</li>
+          <li>A post-purchase account invitation lets shoppers create an account after checkout.</li>
+          <li>Guided settings for Storefront, Product pages, Cart &amp; checkout, Offers and Social proof. Section saves retain unrelated settings.</li>
+          <li>No fabricated purchases, viewer counts or stock numbers. Feature availability is not a promise of a measured conversion lift.</li>
+        </ul></details>
+      </div>
+    </section>
+    <section id="walkthrough" class="section walkthrough" aria-labelledby="walkthrough-title"><div class="wrap">
+      <div class="section-heading"><p class="eyebrow">See the current design in action</p><h2 id="walkthrough-title">A real storefront. A complete journey.</h2><p>Fresh captures from the Purple demo, from search and saved items to checkout reassurance.</p></div>
+      <video controls playsinline preload="none" poster="assets/convertsell-demo-poster.webp" aria-label="ConvertSell storefront and conversion features walkthrough" aria-describedby="capture-note"><source src="assets/convertsell-demo.mp4" type="video/mp4">Your browser does not support this video. Read the walkthrough transcript below.</video>
+      <p id="capture-note" class="caption">Captured November 19, 2026. The staging store still displays “Purple CRO”; current source packages are named ConvertSell. Products, orders and reviews shown are demo content. Payment-provider buttons depend on the installed gateway.</p>
+      <details class="transcript"><summary>Read the walkthrough transcript</summary><ol id="storyboard">
+        <li>Purple’s white storefront, typography and purple purchase buttons stay familiar.</li>
+        <li>Category navigation and native catalog filters help shoppers explore the range.</li>
+        <li>Instant search offers matching products as the shopper types.</li>
+        <li>Review summaries and purchase guidance sit near the product’s buy button.</li>
+        <li>A saved product appears on the browser wishlist with a live header count.</li>
+        <li>The native mini-cart opens after an item is added.</li>
+        <li>The cart shows shipping progress alongside the native checkout action.</li>
+        <li>A configured upsell gives the shopper a clear accept or decline decision.</li>
+        <li>Choose before-checkout, inline or post-purchase offers, with an optional downsell. This is a feature explanation card.</li>
+        <li>Optional checkout add-ons show the configured products and current prices.</li>
+        <li>Published helpful content and selected reviews add context beside the order summary.</li>
+        <li>The mobile checkout retains the native purchase control.</li>
+        <li>Post-purchase offers use a separate checkout; the completed order stays unchanged.</li>
+        <li>ConvertSell and its optional toolkit are separate, free GPL packages built on Purple.</li>
+      </ol></details>
+      <div class="screenshot-grid">
+        <figure><a href="assets/screenshots/product.jpg"><img src="assets/screenshots/product.jpg" width="1440" height="1000" alt="Purple product page with a knit cardigan, native purchase controls, wishlist, reviews and reassurance." loading="lazy"></a><figcaption><strong>Help the shopper decide.</strong> Product guidance follows Purple’s presentation.</figcaption></figure>
+        <figure><a href="assets/screenshots/checkout.jpg"><img src="assets/screenshots/checkout.jpg" width="1440" height="1000" alt="Current checkout showing the order summary and optional conversion content in Purple’s design." loading="lazy"></a><figcaption><strong>Support the final step.</strong> Optional extras and helpful checkout content.</figcaption></figure>
+      </div>
+    </div></section>
+    <section id="setup" class="section wrap" aria-labelledby="setup-title">
+      <div class="section-heading"><p class="eyebrow">Start with the foundation</p><h2 id="setup-title">Purple first. Your conversion features next.</h2></div>
+      <div class="setup-grid">
+        <ol class="steps"><li><strong>Install Purple and WooCommerce.</strong><p>Purple supplies the storefront design and native commerce layouts.</p></li><li><strong>Activate ConvertSell.</strong><p>The child theme inherits Purple and adds companion setup.</p></li><li><strong>Add the optional toolkit.</strong><p>Review the guided settings and configure only the features and offers your store needs.</p></li></ol>
+        <aside class="requirements"><h3>Current source packages</h3><dl><div><dt>ConvertSell theme</dt><dd>0.7.0</dd></div><div><dt>ConvertSell Toolkit</dt><dd>0.12.0</dd></div><div><dt>WordPress</dt><dd>7.1+</dd></div><div><dt>WooCommerce</dt><dd>11.1+</dd></div><div><dt>PHP</dt><dd>7.4+</dd></div></dl><p>Tested with Purple 1.0.3. The toolkit and child theme install separately. The current packages are source previews; WordPress.org listing is planned.</p><a class="button" href="https://github.com/solstudioim/convertsell#installation">View installation guide ↗</a></aside>
+      </div>
+      <p class="migration-note">Already using Purple Optimize? <a href="https://github.com/solstudioim/convertsell/blob/main/docs/convertsell-migration.md">Read the migration guide</a> before changing theme or plugin folders. Existing toolkit settings and published legacy shortcodes remain supported; saved Site Editor customizations need a separate theme-slug transfer.</p>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="wrap footer-inner"><div><a class="wordmark" href="./">ConvertSell<span aria-hidden="true">↗</span></a><p>Useful conversion features.<br>Your store, your choices.</p></div><nav aria-label="Project links"><a href="https://github.com/solstudioim/convertsell">Source &amp; documentation</a><a href="https://wordpress.org/themes/purple/">Purple on WordPress.org</a><a href="https://github.com/woocommerce/woocommerce/tree/trunk/themes/purple">Purple parent source</a><a href="https://github.com/solstudioim/convertsell/issues">Report an issue</a></nav><p class="legal">An independent project by Sol J. Built on Purple by Automattic. GPLv2 or later. <a href="assets/OFL-Inter.txt">Inter font license</a>.</p></div></footer>
+</body>
 </html>

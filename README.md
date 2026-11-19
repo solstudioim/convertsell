@@ -7,7 +7,12 @@ on Woo's Purple block theme. It preserves the parent's appearance and adds optio
 
 **Current toolkit release:** `0.12.0`
 
-**Historical demo (previous custom design):** https://purplecrodemo.wpcomstaging.com/
+**Project demo and walkthrough:** https://solstudioim.github.io/convertsell/
+
+**Live sample store (current Purple presentation):** https://purplecrodemo.wpcomstaging.com/
+
+The sample store still displays its legacy Purple CRO identity. The walkthrough
+uses current public captures; products, reviews and orders shown are demo data.
 
 The project is deliberately split into two packages:
 
@@ -104,13 +109,16 @@ The toolkit intentionally does not manufacture purchases, names, viewer counts,
 or arbitrary scarcity. Showing real customer first names is an explicit setting
 that should only be used with an appropriate privacy basis.
 
-## Premium CRO presentation
+## Parent-native CRO presentation
 
-The default presentation uses a restrained product-led hierarchy: deep purple
-for identity, orange only for purchase decisions, flat CRO components, consistent
-4:5 catalog media, one current sale badge, and one factual stock message. The cart
-retains policy guidance while the active checkout becomes an enclosed flow with a
-clickable store identity and the single native Place Order action.
+Purple supplies the storefront templates, white/lilac/purple palette, Inter
+typography and native commerce controls. The child does not replace those
+templates or add a global color/layout layer. Toolkit components inherit parent
+tokens and stay scoped to their own surfaces. Promotion colors are configurable.
+
+The native mini-cart, cart and checkout remain familiar. Desktop sticky product
+purchase controls and optional mobile cart/checkout controls are distinct
+features; the sticky product bar is intentionally hidden on mobile.
 
 Product, offer, wishlist, recent-purchase proof, countdown, sticky cart/checkout,
 and configurable upsell/downsell capabilities remain intact. Visual restraint does

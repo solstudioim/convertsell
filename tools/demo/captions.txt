@@ -1,18 +1,14 @@
-01-opening.png|ConvertSell — conversion-focused WooCommerce child theme.
-02-home-trust.png|Clear discovery, trust, and product hierarchy.
-03-catalog.png|Fast product-led catalog navigation.
-04-product.png|One focused purchase surface on every screen.
-05-mobile-sticky.png|Mobile sticky cart keeps the next step in reach.
-06-cart-success.png|Immediate, accessible cart confirmation.
-07-cart.png|Cart summary keeps checkout intent clear.
-08-upsell.png|Pre-checkout upsell — relevant, optional, and easy to decline.
-09-downsell.png|Downsell appears only after the upsell is rejected.
-10-downsell-accepted.png|Downsell accepted — cart updates before checkout.
-11-checkout-contact.png|Native WooCommerce checkout — contact and delivery stay enclosed.
-12-checkout-payment.png|Test payment with a clear order action.
-13-order-confirmed.png|Completed order confirmed before any follow-up offer.
-14-post-purchase.png|Post-purchase offer — an explicit, separate next step.
-15-post-purchase-detail.png|Acceptance starts a separate checkout; the completed order is unchanged.
-16-toolkit-valid.png|Toolkit validation confirms eligible offer products.
-17-toolkit-warning.png|Warnings flag invalid products before they break the funnel.
-18-end-card-source.png|Built on Woo Purple. Open source under GPL.
+01-home.png|4|Purple’s design stays. Conversion features are optional.
+02-shop.png|4|Explore the range with native categories and catalog filters.
+03-search.png|5|Instant product search with keyboard-ready suggestions.
+04-product.png|5|Approved reviews and purchase guidance near the buy button.
+05-wishlist.png|4|Save products in this browser and return through the header wishlist.
+06-mini-cart.png|4|The native mini-cart keeps the next step familiar.
+07-cart.png|4|Shipping progress follows live cart totals.
+08-upsell.png|5|Optional pre-checkout upsell with a clear decline path.
+09-offer-options.png|4|Choose pre-checkout, inline or post-purchase offers, with an optional downsell.
+10-checkout-addons.png|5|Up to four optional checkout add-ons with real catalog pricing.
+11-checkout-content.png|5|Published helpful content and selected reviews at checkout.
+12-mobile-checkout.png|4|Mobile checkout keeps the native purchase action within reach.
+13-post-purchase.png|5|Post-purchase offers start a separate checkout, never a silent recharge.
+14-packages.png|5|ConvertSell 0.7.0 + Toolkit 0.12.0. Free and GPL. Built on Purple.
