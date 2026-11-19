@@ -18,12 +18,8 @@ function pot_presentation_category_query_args( int $default_category_id ): array
 		'taxonomy'   => 'product_cat',
 		'parent'     => 0,
 		'hide_empty' => true,
-		'number'     => 8,
+		'number'     => $default_category_id > 0 ? 9 : 8,
 	);
-
-	if ( $default_category_id > 0 ) {
-		$args['exclude'] = array( $default_category_id );
-	}
 
 	return $args;
 }
@@ -174,6 +170,8 @@ function pot_presentation_popularity_label( bool $configured, string $label ): s
  * @return bool
  */
 function pot_presentation_policy_summary_is_safe( string $summary, array $material_terms ): bool {
+	// The fallback supports standalone contract tests; WordPress uses wp_strip_all_tags().
+	// phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags
 	$plain      = function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $summary ) : strip_tags( $summary );
 	$normalized = strtolower( trim( $plain ) );
 	if ( '' === $normalized ) {

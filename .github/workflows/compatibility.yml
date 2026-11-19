@@ -20,6 +20,7 @@ jobs:
       - run: php tests/storefront-presentation-contracts.php
       - run: php tests/parent-version-advisory.php
       - run: php tests/convertsell-duplicate-runtime.php
+      - run: php tests/convertsell-missing-dependency.php
       - run: find wp-content/themes/purple wp-content/themes/convertsell wp-content/plugins/convertsell-toolkit -name '*.php' -print0 | xargs -0 -n1 php -l
       - run: git diff --check
       - run: python3 tools/build-packages.py --output "$RUNNER_TEMP/packages"
@@ -68,6 +69,7 @@ jobs:
           wp eval-file tests/checkout-discounts-integration.php --path="$RUNNER_TEMP/site"
           wp eval-file tests/checkout-extras-integration.php --path="$RUNNER_TEMP/site"
           wp eval-file tests/reviews-integration.php --path="$RUNNER_TEMP/site"
+          wp eval-file tests/query-performance-integration.php --path="$RUNNER_TEMP/site"
           wp eval-file tests/mini-cart-integration.php --path="$RUNNER_TEMP/site"
           wp eval-file tests/wishlist-navigation-integration.php --path="$RUNNER_TEMP/site"
           wp eval-file tests/checkout-content-integration.php --path="$RUNNER_TEMP/site"
@@ -89,6 +91,8 @@ jobs:
           PHP_CLI_SERVER_WORKERS=4 wp server --host=127.0.0.1 --port=8888 --path="$POT_WP_PATH" > "$RUNNER_TEMP/browser-server.log" 2>&1 &
           for attempt in $(seq 1 30); do if curl --fail --silent http://localhost:8888/wp-login.php > /dev/null; then break; fi; sleep 1; done
           node tests/companion-settings.e2e.mjs
+          node tests/plugin-submission-security.e2e.mjs
+          node tests/query-search.e2e.mjs
           node tests/parent-native.e2e.mjs
           node tests/reviews.e2e.mjs
           node tests/mini-cart.e2e.mjs

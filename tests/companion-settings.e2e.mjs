@@ -27,7 +27,8 @@ try {
 	await Promise.all([page.waitForURL((url) => !url.pathname.endsWith('wp-login.php'), { waitUntil: 'domcontentloaded' }), page.locator('#wp-submit').click()]);
 	await page.goto(`${site}/wp-admin/admin.php?page=convertsell`);
 	await page.getByRole('heading', { name: 'Compatibility checks' }).waitFor();
-	assert.equal(await page.locator('main .widefat tbody tr').count(), 6);
+	const hasChildSetup = wp('echo get_stylesheet();') === 'convertsell';
+	assert.equal(await page.locator('main .widefat tbody tr').count(), hasChildSetup ? 6 : 4);
 	assert.equal(await page.getByRole('cell', { name: 'Needs attention', exact: true }).count(), 0);
 	await page.screenshot({ path: `${artifacts}/overview-desktop.png`, fullPage: true });
 	const before = JSON.parse(wp('echo wp_json_encode(pot_settings());'));
@@ -65,8 +66,10 @@ try {
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.screenshot({ path: `${artifacts}/checkout-settings-mobile.png`, fullPage: true });
 	assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Mobile admin overflow');
-	await page.goto(`${site}/wp-admin/themes.php?page=convertsell-setup`);
-	await page.getByRole('link', { name: 'Open toolkit settings' }).waitFor();
+	if (hasChildSetup) {
+		await page.goto(`${site}/wp-admin/themes.php?page=convertsell-setup`);
+		await page.getByRole('link', { name: 'Open toolkit settings' }).waitFor();
+	}
 	}
 	// Disable the optional redirect funnel for the baseline cart/checkout journey.
 	wp('$s=pot_settings(); $s["offer_funnel"]=0; update_option("pot_settings",$s);');
@@ -82,6 +85,10 @@ try {
 	await shop.locator('.wp-block-woocommerce-add-to-cart-with-options').waitFor();
 	const add = shop.locator('.wp-block-woocommerce-add-to-cart-with-options .wp-block-woocommerce-product-button button').first();
 	await add.click();
+	if (wp('echo get_stylesheet();') !== 'convertsell') {
+		// Standalone Purple retains its own drawer-opening behavior.
+		await shop.locator('.wc-block-mini-cart__button').click();
+	}
 	await shop.waitForFunction(() => document.querySelector('.wc-block-mini-cart__drawer')?.getAttribute('aria-hidden') === 'false');
 	await shop.locator('.wc-block-mini-cart__drawer').waitFor({ state: 'visible' });
 	await shop.locator('.wc-block-mini-cart__drawer .wc-block-components-product-name:visible').first().waitFor({ state: 'visible' });

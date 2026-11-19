@@ -7,4 +7,6 @@
  */
 defined( 'ABSPATH' ) || exit;
 ?>
-<div <?php echo get_block_wrapper_attributes( array( 'data-block-name' => 'purple-optimize/checkout-content' ) ); ?>></div>
+<div <?php // Core escapes every attribute value before returning the attribute list.
+// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+echo get_block_wrapper_attributes( array( 'data-block-name' => 'purple-optimize/checkout-content' ) ); ?>></div>
