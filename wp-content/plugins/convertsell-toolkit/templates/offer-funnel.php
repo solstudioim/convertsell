@@ -30,11 +30,11 @@ $is_post_purchase = 'post_purchase' === ( $context['context'] ?? '' );
 	<?php wp_body_open(); ?>
 	<header class="pot-offer-header">
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a>
-		<span><?php echo $is_post_purchase ? esc_html__( 'Order complete', 'convertsell-toolkit' ) : esc_html( sprintf( _n( '%d item in your cart', '%d items in your cart', WC()->cart->get_cart_contents_count(), 'convertsell-toolkit' ), WC()->cart->get_cart_contents_count() ) ); ?></span>
+		<span><?php echo $is_post_purchase ? esc_html__( 'Order complete', 'convertsell-toolkit' ) : esc_html( sprintf( /* translators: %d: cart item count. */ _n( '%d item in your cart', '%d items in your cart', WC()->cart->get_cart_contents_count(), 'convertsell-toolkit' ), WC()->cart->get_cart_contents_count() ) ); ?></span>
 	</header>
 	<main class="pot-offer-shell">
 		<section class="pot-offer-card" aria-labelledby="pot-offer-title">
-			<div class="pot-offer-media"><?php echo $product->get_image( 'woocommerce_single', array( 'loading' => 'eager' ) ); ?></div>
+			<div class="pot-offer-media"><?php echo wp_kses_post( $product->get_image( 'woocommerce_single', array( 'loading' => 'eager' ) ) ); ?></div>
 			<div class="pot-offer-copy">
 				<span class="pot-offer-eyebrow"><?php echo esc_html( $is_downsell ? __( 'One last option', 'convertsell-toolkit' ) : ( $is_post_purchase ? __( 'Post-purchase offer', 'convertsell-toolkit' ) : __( 'Checkout-only offer', 'convertsell-toolkit' ) ) ); ?></span>
 				<h1 id="pot-offer-title"><?php echo esc_html( $is_downsell ? __( 'Would you prefer this offer?', 'convertsell-toolkit' ) : __( 'Would you like to add this?', 'convertsell-toolkit' ) ); ?></h1>
@@ -43,7 +43,7 @@ $is_post_purchase = 'post_purchase' === ( $context['context'] ?? '' );
 				<p class="pot-offer-price">
 					<del><?php echo wp_kses_post( wc_price( (float) $context['original_price'] ) ); ?></del>
 					<ins><?php echo wp_kses_post( wc_price( (float) $context['discounted_price'] ) ); ?></ins>
-					<strong><?php echo esc_html( sprintf( __( '%d%% off on this page', 'convertsell-toolkit' ), $discount ) ); ?></strong>
+					<strong><?php echo esc_html( sprintf( /* translators: %d: offer discount percentage. */ __( '%d%% off on this page', 'convertsell-toolkit' ), $discount ) ); ?></strong>
 				</p>
 				<?php if ( ! empty( $context['expiry'] ) ) : ?>
 				<p class="pot-offer-timer" data-offer-expiry="<?php echo esc_attr( (string) ( (int) $context['expiry'] * 1000 ) ); ?>">

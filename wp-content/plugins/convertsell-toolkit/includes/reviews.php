@@ -47,10 +47,12 @@ function pot_reviews_query( array $config ): array {
 		if ( ! $args['comment__in'] ) { return array(); }
 	}
 	if ( $config['min_rating'] ) {
+		// Filter before LIMIT so older matching reviews are retained; candidate IDs are cached.
+		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 		$args['meta_query'] = array( array( 'key' => 'rating', 'value' => $config['min_rating'], 'compare' => '>=', 'type' => 'NUMERIC' ) );
 	}
 	$reviews = array();
-	foreach ( get_comments( $args ) as $review ) {
+	foreach ( pot_review_candidates( $args ) as $review ) {
 		$post = get_post( $review->comment_post_ID );
 		if ( ! $post || 'product' !== $post->post_type || 'publish' !== $post->post_status || $post->post_password || ! is_post_publicly_viewable( $post ) || ! trim( wp_strip_all_tags( $review->comment_content ) ) ) {
 			continue;
@@ -80,7 +82,7 @@ function pot_reviews_shortcode( $attributes = array() ): string {
 		if ( 'anonymous' === $config['author'] || ! $name || is_email( $review->comment_author ) ) { $name = __( 'Customer', 'convertsell-toolkit' ); }
 		?>
 		<figure class="pot-testimonial">
-		<?php if ( $rating ) : ?><div class="pot-testimonial-rating" role="img" aria-label="<?php echo esc_attr( sprintf( __( '%d out of 5 stars', 'convertsell-toolkit' ), $rating ) ); ?>"><span aria-hidden="true"><?php echo esc_html( str_repeat( '★', $rating ) . str_repeat( '☆', 5 - $rating ) ); ?></span></div><?php endif; ?>
+		<?php if ( $rating ) : ?><div class="pot-testimonial-rating" role="img" aria-label="<?php echo esc_attr( sprintf( /* translators: %d: product review star rating. */ __( '%d out of 5 stars', 'convertsell-toolkit' ), $rating ) ); ?>"><span aria-hidden="true"><?php echo esc_html( str_repeat( '★', $rating ) . str_repeat( '☆', 5 - $rating ) ); ?></span></div><?php endif; ?>
 		<blockquote><?php echo wpautop( esc_html( wp_strip_all_tags( $review->comment_content ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></blockquote>
 		<figcaption><span class="pot-testimonial-author"><?php echo esc_html( $name ); ?></span>
 		<?php if ( function_exists( 'wc_review_is_from_verified_owner' ) && wc_review_is_from_verified_owner( $review->comment_ID ) ) : ?><span class="pot-testimonial-verified"><?php esc_html_e( 'Verified owner', 'convertsell-toolkit' ); ?></span><?php endif; ?>
@@ -90,7 +92,7 @@ function pot_reviews_shortcode( $attributes = array() ): string {
 	</div>
 	<?php if ( $rotator ) : ?><div class="pot-testimonials-controls" hidden>
 	<button type="button" class="pot-review-arrow" data-review-previous aria-label="<?php esc_attr_e( 'Previous review', 'convertsell-toolkit' ); ?>"><span aria-hidden="true">‹</span></button>
-	<span class="pot-testimonials-position" role="status" aria-live="polite" data-position-template="<?php esc_attr_e( '%1$d of %2$d', 'convertsell-toolkit' ); ?>"></span>
+	<span class="pot-testimonials-position" role="status" aria-live="polite" data-position-template="<?php /* translators: 1: current review position, 2: total reviews. */ esc_attr_e( '%1$d of %2$d', 'convertsell-toolkit' ); ?>"></span>
 	<button type="button" class="pot-review-arrow" data-review-next aria-label="<?php esc_attr_e( 'Next review', 'convertsell-toolkit' ); ?>"><span aria-hidden="true">›</span></button>
 	<?php if ( $config['autoplay'] ) : ?><button type="button" class="pot-review-play" data-review-play aria-label="<?php esc_attr_e( 'Pause rotation', 'convertsell-toolkit' ); ?>" aria-pressed="true" data-play-label="<?php esc_attr_e( 'Play rotation', 'convertsell-toolkit' ); ?>" data-pause-label="<?php esc_attr_e( 'Pause rotation', 'convertsell-toolkit' ); ?>"><span aria-hidden="true">Ⅱ</span></button><?php endif; ?>
 	</div><?php endif; ?>
@@ -129,6 +131,8 @@ function pot_reviews_checkout_shortcodes( string $content ): string {
 function pot_preview_reviews(): void {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) { wp_send_json_error( array( 'message' => __( 'You cannot preview reviews.', 'convertsell-toolkit' ) ), 403 ); }
 	check_ajax_referer( 'pot_preview_reviews', 'nonce' );
+	// pot_reviews_config validates enums, bounds numeric fields, and sanitizes every string.
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 	$config = pot_reviews_config( isset( $_POST['config'] ) && is_array( $_POST['config'] ) ? wp_unslash( $_POST['config'] ) : array() );
 	if ( ( 'products' === $config['source'] && ! $config['products'] ) || ( 'reviews' === $config['source'] && ! $config['review_ids'] ) ) {
 		wp_send_json_error( array( 'message' => __( 'Enter at least one valid ID for the selected review source.', 'convertsell-toolkit' ) ), 400 );

@@ -22,7 +22,7 @@ function pot_test_expect( bool $condition, string $message ): void {
 }
 
 $category_args = pot_presentation_category_query_args( 7 );
-pot_test_expect( array( 7 ) === $category_args['exclude'], 'The configured default category must be excluded.' );
+pot_test_expect( ! isset( $category_args['exclude'] ) && 9 === $category_args['number'], 'Fetch one extra category for bounded in-memory default exclusion.' );
 pot_test_expect( ! isset( pot_presentation_category_query_args( 0 )['exclude'] ), 'An unset default category must not add an empty exclusion.' );
 
 $active_checkout = pot_presentation_checkout_classes( array( 'woocommerce-checkout' ), true, false, false, false );

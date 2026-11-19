@@ -130,7 +130,7 @@ function pot_render_checkout_settings(): void {
 				$prefix  = 'pot_checkout_settings[upsells][' . $index . ']';
 				$issue   = $id ? pot_offer_product_issue( $id ) : '';
 				?>
-			<tr><th scope="row"><label for="pot-checkout-product-<?php echo esc_attr( (string) $index ); ?>"><?php echo esc_html( sprintf( __( 'Add-on %d', 'convertsell-toolkit' ), $index + 1 ) ); ?></label></th><td>
+			<tr><th scope="row"><label for="pot-checkout-product-<?php echo esc_attr( (string) $index ); ?>"><?php echo esc_html( sprintf( /* translators: %d: add-on position, starting at one. */ __( 'Add-on %d', 'convertsell-toolkit' ), $index + 1 ) ); ?></label></th><td>
 				<select class="wc-product-search" style="width: 100%; max-width: 480px;" id="pot-checkout-product-<?php echo esc_attr( (string) $index ); ?>" name="<?php echo esc_attr( $prefix ); ?>[product_id]" data-action="woocommerce_json_search_products" data-allow_clear="true" data-placeholder="<?php esc_attr_e( 'Search for a simple product…', 'convertsell-toolkit' ); ?>">
 					<?php if ( $id ) : ?><option value="<?php echo esc_attr( (string) $id ); ?>" selected><?php echo esc_html( $product ? wp_strip_all_tags( $product->get_formatted_name() ) : '#' . $id ); ?></option><?php endif; ?>
 				</select>
@@ -252,7 +252,7 @@ function pot_checkout_cart_data(): array {
 function pot_update_checkout_upsell( $data ): void {
 	$settings = pot_checkout_settings();
 	if ( ! is_array( $data ) || ! isset( $data['id'], $data['selected'] ) || ! is_bool( $data['selected'] ) || ! is_int( $data['id'] ) || $data['id'] < 1 || ! WC()->cart || WC()->cart->is_empty() ) {
-		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_invalid_addon', __( 'Please refresh checkout and try again.', 'convertsell-toolkit' ), 400 );
+		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_invalid_addon', esc_html__( 'Please refresh checkout and try again.', 'convertsell-toolkit' ), 400 );
 	}
 	$id    = absint( $data['id'] );
 	$lines = pot_checkout_product_lines( $id );
@@ -266,14 +266,14 @@ function pot_update_checkout_upsell( $data ): void {
 		return;
 	}
 	if ( ! $settings['upsells_enabled'] || ! in_array( $id, array_column( $settings['upsells'], 'product_id' ), true ) ) {
-		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_unavailable_addon', __( 'This checkout add-on is no longer available.', 'convertsell-toolkit' ), 400 );
+		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_unavailable_addon', esc_html__( 'This checkout add-on is no longer available.', 'convertsell-toolkit' ), 400 );
 	}
 	if ( $lines ) {
 		return; // Repeated acceptance never increases quantity or duplicates a line.
 	}
 	$product = wc_get_product( $id );
 	if ( pot_offer_product_issue_for_product( $product ) || ! apply_filters( 'woocommerce_add_to_cart_validation', true, $id, 1 ) ) {
-		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_invalid_product', __( 'This add-on cannot be added. Please choose another item.', 'convertsell-toolkit' ), 400 );
+		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_invalid_product', esc_html__( 'This add-on cannot be added. Please choose another item.', 'convertsell-toolkit' ), 400 );
 	}
 	$cart_data = array( 'pot_checkout_upsell' => true );
 	foreach ( $settings['upsells'] as $row ) {
@@ -287,7 +287,7 @@ function pot_update_checkout_upsell( $data ): void {
 		}
 	}
 	if ( ! WC()->cart->add_to_cart( $id, 1, 0, array(), $cart_data ) ) {
-		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_addon_failed', __( 'Could not add this item. Please check its availability and try again.', 'convertsell-toolkit' ), 400 );
+		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'pot_addon_failed', esc_html__( 'Could not add this item. Please check its availability and try again.', 'convertsell-toolkit' ), 400 );
 	}
 }
 
@@ -308,7 +308,7 @@ add_action( 'woocommerce_before_calculate_totals', 'pot_apply_checkout_addon_pri
 function pot_checkout_addon_item_data( array $data, array $item ): array {
 	$discount = pot_checkout_accepted_discount( $item );
 	if ( $discount ) {
-		$data[] = array( 'key' => __( 'Checkout add-on discount', 'convertsell-toolkit' ), 'value' => sprintf( __( '%d%% off', 'convertsell-toolkit' ), $discount ) );
+		$data[] = array( 'key' => __( 'Checkout add-on discount', 'convertsell-toolkit' ), 'value' => sprintf( /* translators: %d: discount percentage. */ __( '%d%% off', 'convertsell-toolkit' ), $discount ) );
 	}
 	return $data;
 }
@@ -318,7 +318,7 @@ add_filter( 'woocommerce_get_item_data', 'pot_checkout_addon_item_data', 10, 2 )
 function pot_checkout_addon_order_meta( WC_Order_Item_Product $item, string $key, array $values ): void {
 	$discount = pot_checkout_accepted_discount( $values );
 	if ( $discount ) {
-		$item->add_meta_data( __( 'Checkout add-on discount', 'convertsell-toolkit' ), sprintf( __( '%d%% off', 'convertsell-toolkit' ), $discount ), true );
+		$item->add_meta_data( __( 'Checkout add-on discount', 'convertsell-toolkit' ), sprintf( /* translators: %d: discount percentage. */ __( '%d%% off', 'convertsell-toolkit' ), $discount ), true );
 		$item->add_meta_data( '_pot_checkout_discount', $discount, true );
 		$item->add_meta_data( '_pot_checkout_base_price', $values['pot_checkout_base_price'], true );
 	}

@@ -81,13 +81,13 @@ function pot_render_overview(): void {
 	$settings = pot_settings();
 	?>
 	<section class="pot-settings-card"><h2><?php esc_html_e( 'Compatibility checks', 'convertsell-toolkit' ); ?></h2>
-	<p><?php esc_html_e( 'Checked automatically on each visit. Purple 1.0.3 is the tested baseline; an older parent does not block companion installation. Verify storefront behavior when testing another parent version.', 'convertsell-toolkit' ); ?></p>
+	<p><?php esc_html_e( 'Version checks inspect installed requirements locally. The readme lists tested theme pairings; verify your own storefront and extensions before deployment.', 'convertsell-toolkit' ); ?></p>
 	<table class="widefat striped"><thead><tr><th><?php esc_html_e( 'Component', 'convertsell-toolkit' ); ?></th><th><?php esc_html_e( 'Installed', 'convertsell-toolkit' ); ?></th><th><?php esc_html_e( 'Required / recommended', 'convertsell-toolkit' ); ?></th><th><?php esc_html_e( 'Status', 'convertsell-toolkit' ); ?></th></tr></thead><tbody>
 	<?php foreach ( pot_environment_checks() as $check ) : ?>
 	<tr><th scope="row"><?php echo esc_html( $check['label'] ); ?></th><td><?php echo esc_html( $check['version'] ?: __( 'Not active', 'convertsell-toolkit' ) ); ?></td><td><?php echo esc_html( $check['minimum'] . ( false === ( $check['required'] ?? true ) ? __( ' (recommended)', 'convertsell-toolkit' ) : '' ) ); ?></td><td><?php echo esc_html( $check['ok'] ? __( 'Meets minimum', 'convertsell-toolkit' ) : ( false === ( $check['required'] ?? true ) ? __( 'Older parent — testing allowed', 'convertsell-toolkit' ) : __( 'Needs attention', 'convertsell-toolkit' ) ) ); ?></td></tr>
 	<?php endforeach; ?>
 	</tbody></table><p><a class="button" href="<?php echo esc_url( pot_section_url( 'overview' ) ); ?>"><?php esc_html_e( 'Run checks again', 'convertsell-toolkit' ); ?></a></p>
-	<?php if ( 'convertsell' !== get_stylesheet() ) : ?><p class="notice notice-warning inline"><?php esc_html_e( 'ConvertSell is not the active theme. Toolkit settings are retained; verify storefront behavior with your active theme.', 'convertsell-toolkit' ); ?></p><?php endif; ?>
+	<?php if ( ! in_array( get_stylesheet(), array( 'convertsell', 'purple' ), true ) ) : ?><p class="notice notice-warning inline"><?php esc_html_e( 'Your active theme is outside the tested Purple pairings. Toolkit settings are retained; verify storefront behavior with your active theme.', 'convertsell-toolkit' ); ?></p><?php endif; ?>
 	</section>
 	<section class="pot-settings-card"><h2><?php esc_html_e( 'Your setup', 'convertsell-toolkit' ); ?></h2><p><?php esc_html_e( 'Review the essentials first. Offers and recent-purchase proof are optional.', 'convertsell-toolkit' ); ?></p>
 	<?php foreach ( array( 'storefront' => __( 'Review promotion, search and policy links', 'convertsell-toolkit' ), 'products' => __( 'Review product guidance and purchase controls', 'convertsell-toolkit' ), 'checkout' => __( 'Review cart and checkout features', 'convertsell-toolkit' ), 'offers' => __( 'Configure optional upsell and downsell offers', 'convertsell-toolkit' ), 'privacy' => __( 'Configure recent purchases and review testimonials', 'convertsell-toolkit' ) ) as $key => $label ) : ?>
@@ -110,6 +110,8 @@ function pot_render_workspace(): void {
 		return;
 	}
 	$sections = pot_settings_sections();
+	// Read-only, allowlisted navigation; Settings API saves enforce capability and nonce.
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$section  = isset( $_GET['section'] ) && is_string( $_GET['section'] ) ? sanitize_key( wp_unslash( $_GET['section'] ) ) : 'overview';
 	$section  = isset( $sections[ $section ] ) ? $section : 'overview';
 	$settings = pot_settings();
@@ -147,7 +149,7 @@ function pot_render_workspace(): void {
 			pot_checkbox_row( 'sticky_cart', __( 'Sticky add to cart', 'convertsell-toolkit' ), $settings );
 			pot_checkbox_row( 'sale_percentage', __( 'Percentage sale badge', 'convertsell-toolkit' ), $settings );
 			pot_workspace_field( 'stock_threshold', __( 'Low-stock threshold', 'convertsell-toolkit' ), $settings, 'number', __( 'Uses real managed stock. Set to 0 to hide low-stock guidance.', 'convertsell-toolkit' ), '100' );
-			foreach ( array( 'reassurance_one', 'reassurance_two', 'reassurance_three' ) as $index => $key ) { pot_workspace_field( $key, sprintf( __( 'Reassurance point %d', 'convertsell-toolkit' ), $index + 1 ), $settings, 'text', __( 'Use accurate delivery, returns or support information.', 'convertsell-toolkit' ) ); }
+			foreach ( array( 'reassurance_one', 'reassurance_two', 'reassurance_three' ) as $index => $key ) { pot_workspace_field( $key, sprintf( /* translators: %d: reassurance point number. */ __( 'Reassurance point %d', 'convertsell-toolkit' ), $index + 1 ), $settings, 'text', __( 'Use accurate delivery, returns or support information.', 'convertsell-toolkit' ) ); }
 			break;
 		case 'checkout':
 			pot_checkbox_row( 'checkout_labels', __( 'Required and optional checkout field labels', 'convertsell-toolkit' ), $settings );

@@ -3,6 +3,7 @@
 defined( 'ABSPATH' ) || exit;
 
 require_once POT_PATH . 'includes/storefront-presentation.php';
+require_once POT_PATH . 'includes/query-cache.php';
 require_once POT_PATH . 'includes/checkout-extras.php';
 require_once POT_PATH . 'includes/checkout-content.php';
 require_once POT_PATH . 'includes/admin-settings.php';
@@ -77,7 +78,6 @@ function pot_activate(): void {
 	flush_rewrite_rules();
 	update_option( 'pot_version', POT_VERSION );
 }
-register_activation_hook( POT_FILE, 'pot_activate' );
 
 /**
  * Flush the dedicated offer route when the plugin is deactivated.
@@ -148,7 +148,7 @@ function pot_ajax_set_offer_enabled(): void {
 		wp_send_json_error( array( 'message' => __( 'You cannot change these settings.', 'convertsell-toolkit' ) ), 403 );
 	}
 	check_ajax_referer( 'pot_set_offer_enabled', 'nonce' );
-	$enabled = isset( $_POST['enabled'] ) ? wp_unslash( $_POST['enabled'] ) : null;
+	$enabled = isset( $_POST['enabled'] ) && is_string( $_POST['enabled'] ) ? sanitize_text_field( wp_unslash( $_POST['enabled'] ) ) : null;
 	if ( ! in_array( $enabled, array( '0', '1' ), true ) ) {
 		wp_send_json_error( array( 'message' => __( 'Choose enabled or disabled.', 'convertsell-toolkit' ) ), 400 );
 	}
@@ -352,7 +352,7 @@ function pot_product_select_row( string $key, string $label, array $settings, bo
 				<?php if ( $product ) : ?>
 				<option value="<?php echo esc_attr( (string) $product_id ); ?>" selected><?php echo esc_html( wp_strip_all_tags( $product->get_formatted_name() ) ); ?></option>
 				<?php elseif ( $product_id ) : ?>
-				<option value="<?php echo esc_attr( (string) $product_id ); ?>" selected><?php echo esc_html( sprintf( __( 'Product #%d (missing)', 'convertsell-toolkit' ), $product_id ) ); ?></option>
+				<option value="<?php echo esc_attr( (string) $product_id ); ?>" selected><?php echo esc_html( sprintf( /* translators: %d: product ID. */ __( 'Product #%d (missing)', 'convertsell-toolkit' ), $product_id ) ); ?></option>
 				<?php endif; ?>
 			</select>
 			<p class="description" id="<?php echo esc_attr( $help_id ); ?>"><?php esc_html_e( 'Only a published, visible, purchasable, in-stock simple product can be offered.', 'convertsell-toolkit' ); ?></p>
@@ -454,7 +454,7 @@ function pot_enqueue_assets(): void {
 			'cartUrl'           => wc_get_cart_url(),
 			'addedToCart'       => __( 'Added to cart ✓', 'convertsell-toolkit' ),
 			'freeShippingReached' => __( 'You reached the configured free-shipping threshold.', 'convertsell-toolkit' ),
-			'freeShippingRemaining' => __( 'Add %s more to reach the configured free-shipping threshold.', 'convertsell-toolkit' ),
+			'freeShippingRemaining' => /* translators: %s: formatted remaining currency amount. */ __( 'Add %s more to reach the configured free-shipping threshold.', 'convertsell-toolkit' ),
 		)
 	);
 }
@@ -584,10 +584,13 @@ function pot_category_navigation(): void {
 	if ( pot_is_offer_page() || pot_is_active_checkout() || empty( $settings['category_navigation'] ) ) {
 		return;
 	}
-	$categories = get_terms( pot_presentation_category_query_args( absint( get_option( 'default_product_cat' ) ) ) );
+	$default_category = absint( get_option( 'default_product_cat' ) );
+	$categories = get_terms( pot_presentation_category_query_args( $default_category ) );
 	if ( is_wp_error( $categories ) || ! $categories ) {
 		return;
 	}
+	$categories = array_slice( array_values( array_filter( $categories, static function ( $category ) use ( $default_category ) { return (int) $category->term_id !== $default_category; } ) ), 0, 8 );
+	if ( ! $categories ) { return; }
 	?>
 	<div class="pot-category-container has-global-padding is-layout-constrained">
 	<nav class="pot-category-nav alignwide" aria-label="<?php esc_attr_e( 'Shop categories', 'convertsell-toolkit' ); ?>">
@@ -646,7 +649,7 @@ function pot_search_products(): void {
 	$term        = sanitize_text_field( wp_unslash( $_GET['term'] ?? '' ) );
 	$category_id = absint( $_GET['category'] ?? 0 );
 
-	if ( strlen( $term ) < 2 ) {
+	if ( strlen( $term ) < 2 || strlen( $term ) > 128 ) {
 		wp_send_json_success( array() );
 	}
 
@@ -660,22 +663,16 @@ function pot_search_products(): void {
 			'update_post_term_cache' => true,
 	);
 	if ( $category_id && term_exists( $category_id, 'product_cat' ) ) {
+		// Indexed taxonomy filtering is required; WP_Query caches this bounded, no-count query.
+		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 		$args['tax_query'] = array( array( 'taxonomy' => 'product_cat', 'field' => 'term_id', 'terms' => $category_id ) );
 	}
 	$query = new WP_Query( $args );
 	$posts = $query->posts;
 
 	// SKU searches are intentionally bounded and merged with normal title/content results.
-	$sku_query = new WP_Query(
-		array_merge(
-			$args,
-			array(
-				's'          => '',
-				'meta_query' => array( array( 'key' => '_sku', 'value' => $term, 'compare' => 'LIKE' ) ),
-			)
-		)
-	);
-	$posts = array_slice( array_values( array_reduce( array_merge( $posts, $sku_query->posts ), static function ( array $carry, WP_Post $post ): array { $carry[ $post->ID ] = $post; return $carry; }, array() ) ), 0, 6 );
+	$sku_posts = pot_sku_search_posts( $args, $term );
+	$posts = array_slice( array_values( array_reduce( array_merge( $posts, $sku_posts ), static function ( array $carry, WP_Post $post ): array { $carry[ $post->ID ] = $post; return $carry; }, array() ) ), 0, 6 );
 
 	// A small typo fallback helps short catalog searches without adding a full search index.
 	if ( ! $posts ) {
@@ -747,7 +744,7 @@ function pot_filter_sale_badge_block( string $content, array $block ): string {
 	if ( $percentage < 1 ) {
 		return $content;
 	}
-	return pot_presentation_sale_badge_html( $percentage, __( 'Save %d%%', 'convertsell-toolkit' ) );
+	return pot_presentation_sale_badge_html( $percentage, /* translators: %d: discount percentage. */ __( 'Save %d%%', 'convertsell-toolkit' ) );
 }
 add_filter( 'render_block', 'pot_filter_sale_badge_block', 10, 2 );
 
@@ -821,7 +818,9 @@ function pot_product_panel( WC_Product $product ): string {
 	$stock    = $guidance && $product->managing_stock() ? $product->get_stock_quantity() : null;
 	$sale_end = $guidance ? $product->get_date_on_sale_to() : false;
 	$reviews  = $guidance ? (int) $product->get_review_count() : 0;
-	$featured = $reviews ? get_comments( array( 'post_id' => $product->get_id(), 'status' => 'approve', 'type' => 'review', 'number' => 1, 'orderby' => 'comment_meta_value_num', 'meta_key' => 'rating', 'order' => 'DESC' ) ) : array();
+	// A numeric rating sort is necessary for the featured review; the candidate ID is cached.
+	// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+	$featured = $reviews ? pot_review_candidates( array( 'post_id' => $product->get_id(), 'status' => 'approve', 'type' => 'review', 'number' => 1, 'orderby' => 'meta_value_num', 'meta_key' => 'rating', 'order' => 'DESC' ) ) : array();
 	$photo_credits = array();
 	foreach ( $product->get_gallery_image_ids() as $attachment_id ) {
 		$source_url = (string) get_post_meta( $attachment_id, '_pot_media_source_url', true );
@@ -841,12 +840,12 @@ function pot_product_panel( WC_Product $product ): string {
 	?>
 	<section class="pot-buy-box" data-product-id="<?php echo esc_attr( (string) $product->get_id() ); ?>">
 		<?php if ( $reviews ) : ?>
-		<a class="pot-review-summary" href="#reviews" aria-label="<?php echo esc_attr( sprintf( _n( 'Rated %1$s out of 5 from %2$d review', 'Rated %1$s out of 5 from %2$d reviews', $reviews, 'convertsell-toolkit' ), $product->get_average_rating(), $reviews ) ); ?>">
-			<span aria-hidden="true">★★★★★</span> <strong><?php echo esc_html( $product->get_average_rating() ); ?>/5</strong> · <?php echo esc_html( sprintf( _n( '%d review', '%d reviews', $reviews, 'convertsell-toolkit' ), $reviews ) ); ?>
+		<a class="pot-review-summary" href="#reviews" aria-label="<?php echo esc_attr( sprintf( /* translators: 1: average product rating, 2: number of reviews. */ _n( 'Rated %1$s out of 5 from %2$d review', 'Rated %1$s out of 5 from %2$d reviews', $reviews, 'convertsell-toolkit' ), $product->get_average_rating(), $reviews ) ); ?>">
+			<span aria-hidden="true">★★★★★</span> <strong><?php echo esc_html( $product->get_average_rating() ); ?>/5</strong> · <?php echo esc_html( sprintf( /* translators: %d: number of product reviews. */ _n( '%d review', '%d reviews', $reviews, 'convertsell-toolkit' ), $reviews ) ); ?>
 		</a>
 		<?php endif; ?>
 		<?php if ( null !== $stock && $stock > 0 && $stock <= (int) $settings['stock_threshold'] ) : ?>
-		<p class="pot-stock"><span aria-hidden="true">●</span> <?php echo esc_html( sprintf( _n( 'Only %d item left in stock', 'Only %d items left in stock', $stock, 'convertsell-toolkit' ), $stock ) ); ?></p>
+		<p class="pot-stock"><span aria-hidden="true">●</span> <?php echo esc_html( sprintf( /* translators: %d: remaining stock quantity. */ _n( 'Only %d item left in stock', 'Only %d items left in stock', $stock, 'convertsell-toolkit' ), $stock ) ); ?></p>
 		<?php endif; ?>
 		<?php if ( $sale_end && $sale_end->getTimestamp() > time() ) : ?>
 		<p class="pot-countdown" data-end="<?php echo esc_attr( gmdate( 'c', $sale_end->getTimestamp() ) ); ?>"><span><?php esc_html_e( 'Scheduled offer ends in', 'convertsell-toolkit' ); ?></span> <strong data-countdown role="timer"></strong></p>
@@ -1048,8 +1047,11 @@ function pot_offer_url( string $step, string $context = 'pre_checkout', ?WC_Orde
  * @return WC_Order|null
  */
 function pot_post_purchase_source_order(): ?WC_Order {
+	// Read-only order-key lookup; mutations separately verify the offer POST nonce.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended
 	$order_id = absint( $_GET['order_id'] ?? get_query_var( 'order-received' ) );
-	$key      = wc_clean( wp_unslash( $_GET['key'] ?? '' ) );
+	$key      = isset( $_GET['key'] ) && is_string( $_GET['key'] ) ? sanitize_text_field( wp_unslash( $_GET['key'] ) ) : '';
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	$order    = $order_id ? wc_get_order( $order_id ) : false;
 	if ( ! $order || '' === $key || ! hash_equals( $order->get_order_key(), $key ) || $order->has_status( array( 'cancelled', 'failed', 'refunded' ) ) ) {
 		return null;
@@ -1248,7 +1250,7 @@ function pot_handle_offer_funnel(): void {
 		pot_reject_offer( $step, $settings, $context, $source_order );
 	}
 
-	if ( 'POST' === strtoupper( $_SERVER['REQUEST_METHOD'] ?? 'GET' ) ) {
+	if ( 'POST' === strtoupper( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? 'GET' ) ) ) ) {
 		$nonce  = sanitize_text_field( wp_unslash( $_POST['pot_offer_nonce'] ?? '' ) );
 		$action = sanitize_key( wp_unslash( $_POST['pot_offer_action'] ?? '' ) );
 		if ( ! wp_verify_nonce( $nonce, 'pot_offer_' . $step ) ) {
@@ -1344,11 +1346,11 @@ function pot_render_inline_offer(): void {
 	}
 	?>
 	<aside class="pot-inline-offer" aria-labelledby="pot-inline-offer-title">
-		<?php echo $product->get_image( 'woocommerce_thumbnail', array( 'loading' => 'lazy' ) ); ?>
+		<?php echo wp_kses_post( $product->get_image( 'woocommerce_thumbnail', array( 'loading' => 'lazy' ) ) ); ?>
 		<div class="pot-inline-offer-copy">
 			<span><?php echo esc_html( 'downsell' === $step ? __( 'One last option', 'convertsell-toolkit' ) : __( 'Optional checkout offer', 'convertsell-toolkit' ) ); ?></span>
 			<h3 id="pot-inline-offer-title"><?php echo esc_html( $product->get_name() ); ?></h3>
-			<p><?php echo wp_kses_post( wc_price( (float) $product->get_price() * ( 1 - ( $discount / 100 ) ) ) ); ?> <del><?php echo wp_kses_post( wc_price( (float) $product->get_price() ) ); ?></del> · <?php echo esc_html( sprintf( __( '%d%% off', 'convertsell-toolkit' ), $discount ) ); ?></p>
+			<p><?php echo wp_kses_post( wc_price( (float) $product->get_price() * ( 1 - ( $discount / 100 ) ) ) ); ?> <del><?php echo wp_kses_post( wc_price( (float) $product->get_price() ) ); ?></del> · <?php echo esc_html( sprintf( /* translators: %d: discount percentage. */ __( '%d%% off', 'convertsell-toolkit' ), $discount ) ); ?></p>
 			<?php if ( $expiry ) : ?><p class="pot-offer-timer" data-offer-expiry="<?php echo esc_attr( (string) ( $expiry * 1000 ) ); ?>"><span><?php esc_html_e( 'Offer ends in', 'convertsell-toolkit' ); ?></span> <strong data-offer-countdown role="timer"></strong></p><?php endif; ?>
 			<form class="pot-offer-actions" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="pot_inline_offer_decision">
@@ -1444,7 +1446,7 @@ function pot_offer_item_data( array $data, array $cart_item ): array {
 	if ( isset( $cart_item['pot_offer_discount'] ) ) {
 		$data[] = array(
 			'key'   => __( 'Exclusive offer', 'convertsell-toolkit' ),
-			'value' => sprintf( __( '%d%% off', 'convertsell-toolkit' ), (int) $cart_item['pot_offer_discount'] ),
+			'value' => sprintf( /* translators: %d: discount percentage. */ __( '%d%% off', 'convertsell-toolkit' ), (int) $cart_item['pot_offer_discount'] ),
 		);
 	}
 	return $data;
@@ -1460,7 +1462,7 @@ add_filter( 'woocommerce_get_item_data', 'pot_offer_item_data', 10, 2 );
  */
 function pot_offer_order_item_meta( WC_Order_Item_Product $item, string $cart_item_key, array $values ): void {
 	if ( isset( $values['pot_offer_discount'] ) ) {
-		$item->add_meta_data( __( 'Exclusive offer', 'convertsell-toolkit' ), sprintf( __( '%d%% off', 'convertsell-toolkit' ), (int) $values['pot_offer_discount'] ), true );
+		$item->add_meta_data( __( 'Exclusive offer', 'convertsell-toolkit' ), sprintf( /* translators: %d: discount percentage. */ __( '%d%% off', 'convertsell-toolkit' ), (int) $values['pot_offer_discount'] ), true );
 	}
 }
 add_action( 'woocommerce_checkout_create_order_line_item', 'pot_offer_order_item_meta', 10, 3 );
@@ -1607,7 +1609,7 @@ function pot_footer_helpers(): void {
 		$progress  = min( 100, ( $subtotal / $threshold ) * 100 );
 		?>
 		<section id="pot-shipping-progress" class="pot-shipping-progress" data-target="<?php echo esc_attr( (string) $threshold ); ?>" aria-live="polite" aria-atomic="true">
-			<p><?php echo $remaining > 0 ? wp_kses_post( sprintf( __( 'Add %s more to reach the configured free-shipping threshold.', 'convertsell-toolkit' ), wc_price( $remaining ) ) ) : esc_html__( 'You reached the configured free-shipping threshold.', 'convertsell-toolkit' ); ?></p>
+			<p><?php echo $remaining > 0 ? wp_kses_post( sprintf( /* translators: %s: formatted remaining currency amount. */ __( 'Add %s more to reach the configured free-shipping threshold.', 'convertsell-toolkit' ), wc_price( $remaining ) ) ) : esc_html__( 'You reached the configured free-shipping threshold.', 'convertsell-toolkit' ); ?></p>
 			<div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo esc_attr( (string) round( $progress ) ); ?>"><span style="width:<?php echo esc_attr( (string) $progress ); ?>%"></span></div>
 		</section>
 		<?php
@@ -1618,7 +1620,7 @@ function pot_footer_helpers(): void {
 		if ( $product instanceof WC_Product ) {
 			?>
 		<aside class="pot-sticky-cart" aria-hidden="true" data-product-type="<?php echo esc_attr( $product->get_type() ); ?>">
-			<div><?php echo $product->get_image( 'woocommerce_thumbnail', array( 'loading' => 'lazy' ) ); ?><span><strong><?php echo esc_html( $product->get_name() ); ?></strong><span><?php echo wp_kses_post( $product->get_price_html() ); ?></span></span></div>
+			<div><?php echo wp_kses_post( $product->get_image( 'woocommerce_thumbnail', array( 'loading' => 'lazy' ) ) ); ?><span><strong><?php echo esc_html( $product->get_name() ); ?></strong><span><?php echo wp_kses_post( $product->get_price_html() ); ?></span></span></div>
 			<button type="button" class="wp-element-button"><span class="pot-sticky-cart-label"><?php echo esc_html( $product->is_type( 'simple' ) ? $product->single_add_to_cart_text() : __( 'Choose options', 'convertsell-toolkit' ) ); ?></span></button>
 			<span class="pot-sticky-cart-status screen-reader-text" role="status" aria-live="polite" aria-atomic="true"></span>
 		</aside>
@@ -1650,7 +1652,7 @@ function pot_render_product_readiness_meta_box( WP_Post $post ): void {
 	}
 	$image_count = ( $product->get_image_id() ? 1 : 0 ) + count( $product->get_gallery_image_ids() );
 	$checks = array(
-		array( $image_count >= 3, sprintf( __( '%d product images (aim for at least 3 useful angles)', 'convertsell-toolkit' ), $image_count ) ),
+		array( $image_count >= 3, sprintf( /* translators: %d: number of product images. */ __( '%d product images (aim for at least 3 useful angles)', 'convertsell-toolkit' ), $image_count ) ),
 		array( '' !== trim( $product->get_short_description() ), __( 'Scannable short description', 'convertsell-toolkit' ) ),
 		array( '' !== trim( $product->get_description() ), __( 'Detailed description and specifications', 'convertsell-toolkit' ) ),
 	);

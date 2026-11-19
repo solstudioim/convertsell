@@ -5,7 +5,7 @@ on Woo's Purple block theme. It preserves the parent's appearance and adds optio
 
 **Current child-theme release:** `0.7.0`
 
-**Current toolkit release:** `0.12.0`
+**Current toolkit release:** `0.12.2`
 
 **Project demo and walkthrough:** https://solstudioim.github.io/convertsell/
 
@@ -37,6 +37,8 @@ checkout add-ons still require explicit product configuration; recent-purchase p
 Updating the theme files does not replace templates saved in the Site Editor.
 
 ## ConvertSell rename: child 0.7.0 / toolkit 0.12.0
+
+**Submission preparation:** toolkit 0.12.2 adds dependency recovery, output/input hardening and directory metadata without new features.
 
 **Development freeze:** toolkit 0.12.0 carries the ConvertSell identity over the 0.11.10 feedback baseline. Further feature and styling changes are paused pending feedback from the upstream Purple theme developers. Resume development only when the maintainer explicitly reopens it. Repository sync does not publish GitHub release assets or deploy a site.
 
