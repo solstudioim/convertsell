@@ -2,7 +2,7 @@
 /**
  * Print the local seeded order-received URL for browser verification.
  *
- * @package PurpleOptimize
+ * @package ConvertSell
  */
 
 defined( 'ABSPATH' ) || exit;

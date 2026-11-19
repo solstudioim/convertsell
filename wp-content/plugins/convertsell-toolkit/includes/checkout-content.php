@@ -2,7 +2,7 @@
 /**
  * Native WordPress block editing for the helpful checkout panel.
  *
- * @package PurpleOptimizeToolkit
+ * @package ConvertSellToolkit
  * @since 0.9.0
  */
 
@@ -17,9 +17,9 @@ defined( 'ABSPATH' ) || exit;
 function pot_register_checkout_content(): void {
 	register_post_type( 'pot_checkout_info', array(
 		'labels' => array(
-			'name'          => __( 'Helpful checkout content', 'purple-optimize-toolkit' ),
-			'singular_name' => __( 'Helpful checkout content', 'purple-optimize-toolkit' ),
-			'edit_item'     => __( 'Edit helpful checkout content', 'purple-optimize-toolkit' ),
+			'name'          => __( 'Helpful checkout content', 'convertsell-toolkit' ),
+			'singular_name' => __( 'Helpful checkout content', 'convertsell-toolkit' ),
+			'edit_item'     => __( 'Edit helpful checkout content', 'convertsell-toolkit' ),
 		),
 		'public'              => false,
 		'publicly_queryable'  => false,
@@ -77,7 +77,7 @@ add_filter( 'allowed_block_types_all', 'pot_checkout_content_allowed_blocks', 10
  */
 function pot_edit_checkout_content(): void {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_die( esc_html__( 'You cannot edit checkout content.', 'purple-optimize-toolkit' ), '', array( 'response' => 403 ) );
+		wp_die( esc_html__( 'You cannot edit checkout content.', 'convertsell-toolkit' ), '', array( 'response' => 403 ) );
 	}
 	check_admin_referer( 'pot_edit_checkout_content' );
 	$id   = absint( get_option( 'pot_checkout_content_id', 0 ) );
@@ -87,11 +87,11 @@ function pot_edit_checkout_content(): void {
 		$id = wp_insert_post( wp_slash( array(
 			'post_type'    => 'pot_checkout_info',
 			'post_status'  => trim( $legacy ) ? 'publish' : 'draft',
-			'post_title'   => __( 'Helpful checkout content', 'purple-optimize-toolkit' ),
+			'post_title'   => __( 'Helpful checkout content', 'convertsell-toolkit' ),
 			'post_content' => wp_kses_post( $legacy ),
 		) ), true );
 		if ( is_wp_error( $id ) ) {
-			wp_die( esc_html__( 'Could not create the checkout document. Please try again.', 'purple-optimize-toolkit' ) );
+			wp_die( esc_html__( 'Could not create the checkout document. Please try again.', 'convertsell-toolkit' ) );
 		}
 		update_option( 'pot_checkout_content_id', $id, false );
 	}

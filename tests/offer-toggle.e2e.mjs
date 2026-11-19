@@ -20,7 +20,7 @@ try {
 	await adminContext.addCookies([{ name: auth.name, value: auth.cookie, url: site }, { name: auth.adminName, value: auth.adminCookie, url: site }]);
 	const page = await adminContext.newPage();
 	page.setDefaultTimeout(15000);
-	await page.goto(`${site}/wp-admin/admin.php?page=purple-optimize&section=offers`, { waitUntil: 'domcontentloaded' });
+	await page.goto(`${site}/wp-admin/admin.php?page=convertsell&section=offers`, { waitUntil: 'domcontentloaded' });
 	const toggle = page.locator('#pot-offer-enabled');
 	assert.equal(await toggle.isChecked(), true);
 	await toggle.click();

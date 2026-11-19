@@ -107,12 +107,12 @@ try {
 		await adminContext.addCookies([{ name: auth.name, value: auth.cookie, url: site }, { name: auth.adminName, value: auth.adminCookie, url: site }]);
 		const admin = await adminContext.newPage();
 		admin.setDefaultTimeout(15000);
-		await admin.goto(`${site}/wp-admin/admin.php?page=purple-optimize&section=checkout`, { waitUntil: 'domcontentloaded' });
+		await admin.goto(`${site}/wp-admin/admin.php?page=convertsell&section=checkout`, { waitUntil: 'domcontentloaded' });
 		const form = admin.locator('#pot-checkout-settings');
 		await form.waitFor();
 		assert.equal(await form.getByRole('link', { name: 'Open block editor' }).count(), 1);
 		await form.locator('#pot-checkout-title-0').fill('A helpful optional extra');
-		await Promise.all([admin.waitForURL('**/admin.php?page=purple-optimize&section=checkout&settings-updated=true', { waitUntil: 'domcontentloaded' }), form.getByRole('button', { name: 'Save checkout features' }).click()]);
+		await Promise.all([admin.waitForURL('**/admin.php?page=convertsell&section=checkout&settings-updated=true', { waitUntil: 'domcontentloaded' }), form.getByRole('button', { name: 'Save checkout features' }).click()]);
 		assert.equal(await admin.locator('#pot-checkout-title-0').inputValue(), 'A helpful optional extra');
 		await page.reload({ waitUntil: 'domcontentloaded' });
 		await page.locator('.pot-checkout-content').getByRole('heading', { name: 'Helpful checkout information' }).waitFor();

@@ -25,14 +25,14 @@ try {
 	await page.locator('#user_login').fill(process.env.POT_TEST_USER || 'compat');
 	await page.locator('#user_pass').fill(process.env.POT_TEST_PASSWORD || 'local-development-only');
 	await Promise.all([page.waitForURL((url) => !url.pathname.endsWith('wp-login.php'), { waitUntil: 'domcontentloaded' }), page.locator('#wp-submit').click()]);
-	await page.goto(`${site}/wp-admin/admin.php?page=purple-optimize`);
+	await page.goto(`${site}/wp-admin/admin.php?page=convertsell`);
 	await page.getByRole('heading', { name: 'Compatibility checks' }).waitFor();
 	assert.equal(await page.locator('main .widefat tbody tr').count(), 6);
 	assert.equal(await page.getByRole('cell', { name: 'Needs attention', exact: true }).count(), 0);
 	await page.screenshot({ path: `${artifacts}/overview-desktop.png`, fullPage: true });
 	const before = JSON.parse(wp('echo wp_json_encode(pot_settings());'));
 	for (const section of ['storefront', 'products', 'checkout', 'privacy', 'offers']) {
-		await page.goto(`${site}/wp-admin/admin.php?page=purple-optimize&section=${section}`);
+		await page.goto(`${site}/wp-admin/admin.php?page=convertsell&section=${section}`);
 		assert.equal(await page.locator('.pot-workspace-nav [aria-current="page"]').count(), 1);
 		const form = page.locator('#pot-section-settings');
 		await Promise.all([page.waitForURL('**settings-updated=true'), form.getByRole('button', { name: 'Save changes', exact: true }).click()]);
@@ -56,7 +56,7 @@ try {
 	// Actual nonce validation, not a mocked save response.
 	const denied = await context.request.post(`${site}/wp-admin/admin-ajax.php`, { form: { action: 'pot_set_offer_enabled', enabled: '1', nonce: 'invalid' } });
 	assert.equal(denied.status(), 403);
-	await page.goto(`${site}/wp-admin/admin.php?page=purple-optimize&section=checkout`);
+	await page.goto(`${site}/wp-admin/admin.php?page=convertsell&section=checkout`);
 	const extrasBefore = JSON.parse(wp('echo wp_json_encode(pot_checkout_settings());'));
 	const extraForm = page.locator('#pot-checkout-settings');
 	await Promise.all([page.waitForURL('**settings-updated=true'), extraForm.getByRole('button', { name: 'Save checkout features' }).click()]);
@@ -65,7 +65,7 @@ try {
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.screenshot({ path: `${artifacts}/checkout-settings-mobile.png`, fullPage: true });
 	assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Mobile admin overflow');
-	await page.goto(`${site}/wp-admin/themes.php?page=purple-optimize-setup`);
+	await page.goto(`${site}/wp-admin/themes.php?page=convertsell-setup`);
 	await page.getByRole('link', { name: 'Open toolkit settings' }).waitFor();
 	}
 	// Disable the optional redirect funnel for the baseline cart/checkout journey.

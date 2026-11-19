@@ -1,4 +1,4 @@
-01-opening.png|Purple CRO Optimized — conversion-focused WooCommerce child theme.
+01-opening.png|ConvertSell — conversion-focused WooCommerce child theme.
 02-home-trust.png|Clear discovery, trust, and product hierarchy.
 03-catalog.png|Fast product-led catalog navigation.
 04-product.png|One focused purchase surface on every screen.

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-const read = (name) => readFileSync(new URL(`../wp-content/plugins/purple-optimize-toolkit/${name}`, import.meta.url), 'utf8');
+const read = (name) => readFileSync(new URL(`../wp-content/plugins/convertsell-toolkit/${name}`, import.meta.url), 'utf8');
 const php = read('includes/checkout-content.php');
 
 test('helpful content uses the native revision-capable WordPress editor', () => {

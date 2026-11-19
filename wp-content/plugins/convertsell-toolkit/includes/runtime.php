@@ -1,27 +1,6 @@
 <?php
-/**
- * Plugin Name: Purple Optimize Toolkit
- * Description: Lightweight, evidence-based conversion features for WooCommerce and the Purple Optimize child theme.
- * Version: 0.11.10
- * Requires at least: 7.1
- * Requires PHP: 7.4
- * Requires Plugins: woocommerce
- * WC requires at least: 11.1
- * Plugin URI: https://github.com/solstudioim/purple-cro-optimized
- * Author: Sol J
- * Author URI: https://github.com/solstudioim
- * License: GPL-2.0-or-later
- * Text Domain: purple-optimize-toolkit
- *
- * @package PurpleOptimizeToolkit
- */
-
+/** ConvertSell Toolkit runtime; loaded only after the duplicate-install guard. */
 defined( 'ABSPATH' ) || exit;
-
-define( 'POT_VERSION', '0.11.10' );
-define( 'POT_FILE', __FILE__ );
-define( 'POT_PATH', plugin_dir_path( __FILE__ ) );
-define( 'POT_URL', plugin_dir_url( __FILE__ ) );
 
 require_once POT_PATH . 'includes/storefront-presentation.php';
 require_once POT_PATH . 'includes/checkout-extras.php';
@@ -47,7 +26,7 @@ add_action( 'before_woocommerce_init', 'pot_declare_woocommerce_compatibility' )
 function pot_defaults(): array {
 	return array(
 		'promo_enabled'          => 1,
-		'promo_text'             => __( 'Free shipping on qualifying orders', 'purple-optimize-toolkit' ),
+		'promo_text'             => __( 'Free shipping on qualifying orders', 'convertsell-toolkit' ),
 		'promo_code'             => '',
 		'promo_background'       => '',
 		'instant_search'         => 1,
@@ -74,9 +53,9 @@ function pot_defaults(): array {
 		'checkout_labels'       => 1,
 		'stock_threshold'        => 5,
 		'free_shipping_threshold'=> 75,
-		'reassurance_one'        => __( 'Delivery details shown at checkout', 'purple-optimize-toolkit' ),
-		'reassurance_two'        => __( 'Returns policy available before purchase', 'purple-optimize-toolkit' ),
-		'reassurance_three'      => __( 'Support is available when you need it', 'purple-optimize-toolkit' ),
+		'reassurance_one'        => __( 'Delivery details shown at checkout', 'convertsell-toolkit' ),
+		'reassurance_two'        => __( 'Returns policy available before purchase', 'convertsell-toolkit' ),
+		'reassurance_three'      => __( 'Support is available when you need it', 'convertsell-toolkit' ),
 	);
 }
 
@@ -98,7 +77,7 @@ function pot_activate(): void {
 	flush_rewrite_rules();
 	update_option( 'pot_version', POT_VERSION );
 }
-register_activation_hook( __FILE__, 'pot_activate' );
+register_activation_hook( POT_FILE, 'pot_activate' );
 
 /**
  * Flush the dedicated offer route when the plugin is deactivated.
@@ -106,7 +85,7 @@ register_activation_hook( __FILE__, 'pot_activate' );
 function pot_deactivate(): void {
 	flush_rewrite_rules();
 }
-register_deactivation_hook( __FILE__, 'pot_deactivate' );
+register_deactivation_hook( POT_FILE, 'pot_deactivate' );
 
 /**
  * Flush rewrite rules once when an active install receives a route upgrade.
@@ -126,7 +105,7 @@ add_action( 'init', 'pot_maybe_upgrade', 20 );
  */
 function pot_dependency_notice(): void {
 	if ( current_user_can( 'activate_plugins' ) && ! class_exists( 'WooCommerce' ) ) {
-		echo '<div class="notice notice-warning"><p>' . esc_html__( 'Purple Optimize Toolkit needs WooCommerce to provide storefront features.', 'purple-optimize-toolkit' ) . '</p></div>';
+		echo '<div class="notice notice-warning"><p>' . esc_html__( 'ConvertSell Toolkit needs WooCommerce to provide storefront features.', 'convertsell-toolkit' ) . '</p></div>';
 	}
 }
 add_action( 'admin_notices', 'pot_dependency_notice' );
@@ -166,12 +145,12 @@ add_filter( 'option_page_capability_pot_settings_group', 'pot_settings_capabilit
  */
 function pot_ajax_set_offer_enabled(): void {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_send_json_error( array( 'message' => __( 'You cannot change these settings.', 'purple-optimize-toolkit' ) ), 403 );
+		wp_send_json_error( array( 'message' => __( 'You cannot change these settings.', 'convertsell-toolkit' ) ), 403 );
 	}
 	check_ajax_referer( 'pot_set_offer_enabled', 'nonce' );
 	$enabled = isset( $_POST['enabled'] ) ? wp_unslash( $_POST['enabled'] ) : null;
 	if ( ! in_array( $enabled, array( '0', '1' ), true ) ) {
-		wp_send_json_error( array( 'message' => __( 'Choose enabled or disabled.', 'purple-optimize-toolkit' ) ), 400 );
+		wp_send_json_error( array( 'message' => __( 'Choose enabled or disabled.', 'convertsell-toolkit' ) ), 400 );
 	}
 	$settings = pot_settings();
 	if ( '1' === $enabled ) {
@@ -183,7 +162,7 @@ function pot_ajax_set_offer_enabled(): void {
 	update_option( 'pot_settings', $settings );
 	$saved = ! empty( pot_settings()['offer_funnel'] );
 	if ( $saved !== ( '1' === $enabled ) ) {
-		wp_send_json_error( array( 'message' => __( 'The setting could not be saved. Please try again.', 'purple-optimize-toolkit' ) ), 500 );
+		wp_send_json_error( array( 'message' => __( 'The setting could not be saved. Please try again.', 'convertsell-toolkit' ) ), 500 );
 	}
 	wp_send_json_success( array( 'enabled' => $saved ) );
 }
@@ -231,10 +210,10 @@ function pot_sanitize_settings( $input ): array {
 function pot_admin_menu(): void {
 	add_submenu_page(
 		class_exists( 'WooCommerce' ) ? 'woocommerce' : 'options-general.php',
-		__( 'Purple Optimize', 'purple-optimize-toolkit' ),
-		__( 'Purple Optimize', 'purple-optimize-toolkit' ),
+		__( 'ConvertSell', 'convertsell-toolkit' ),
+		__( 'ConvertSell', 'convertsell-toolkit' ),
 		'manage_woocommerce',
-		'purple-optimize',
+		'convertsell',
 		'pot_render_settings_page'
 	);
 }
@@ -246,7 +225,7 @@ add_action( 'admin_menu', 'pot_admin_menu' );
  * @param string $hook_suffix Current admin page hook.
  */
 function pot_admin_assets( string $hook_suffix ): void {
-	if ( ! in_array( $hook_suffix, array( 'woocommerce_page_purple-optimize', 'settings_page_purple-optimize' ), true ) ) {
+	if ( ! in_array( $hook_suffix, array( 'woocommerce_page_convertsell', 'settings_page_convertsell' ), true ) ) {
 		return;
 	}
 	wp_enqueue_style( 'woocommerce_admin_styles' );
@@ -258,20 +237,20 @@ function pot_admin_assets( string $hook_suffix ): void {
 	wp_localize_script( 'pot-admin-settings', 'potReviewBuilder', array(
 		'url' => admin_url( 'admin-ajax.php' ),
 		'nonce' => wp_create_nonce( 'pot_preview_reviews' ),
-		'loading' => __( 'Generating preview…', 'purple-optimize-toolkit' ),
-		'error' => __( 'Could not generate the preview. Check your selection and try again.', 'purple-optimize-toolkit' ),
-		'changed' => __( 'Selection changed. Generate a new shortcode and preview.', 'purple-optimize-toolkit' ),
-		'copied' => __( 'Shortcode copied.', 'purple-optimize-toolkit' ),
-		'copyHelp' => __( 'Select and copy the shortcode below.', 'purple-optimize-toolkit' ),
+		'loading' => __( 'Generating preview…', 'convertsell-toolkit' ),
+		'error' => __( 'Could not generate the preview. Check your selection and try again.', 'convertsell-toolkit' ),
+		'changed' => __( 'Selection changed. Generate a new shortcode and preview.', 'convertsell-toolkit' ),
+		'copied' => __( 'Shortcode copied.', 'convertsell-toolkit' ),
+		'copyHelp' => __( 'Select and copy the shortcode below.', 'convertsell-toolkit' ),
 	) );
 	wp_enqueue_script( 'pot-admin-offer-toggle', POT_URL . 'assets/admin-offer-toggle.js', array(), POT_VERSION, true );
 	wp_localize_script( 'pot-admin-offer-toggle', 'potOfferToggle', array(
 		'url'      => admin_url( 'admin-ajax.php' ),
 		'nonce'    => wp_create_nonce( 'pot_set_offer_enabled' ),
-		'saving'   => __( 'Saving…', 'purple-optimize-toolkit' ),
-		'enabled'  => __( 'Enabled — saved.', 'purple-optimize-toolkit' ),
-		'disabled' => __( 'Disabled — saved.', 'purple-optimize-toolkit' ),
-		'error'    => __( 'Could not save. Please try again or use Save Changes.', 'purple-optimize-toolkit' ),
+		'saving'   => __( 'Saving…', 'convertsell-toolkit' ),
+		'enabled'  => __( 'Enabled — saved.', 'convertsell-toolkit' ),
+		'disabled' => __( 'Disabled — saved.', 'convertsell-toolkit' ),
+		'error'    => __( 'Could not save. Please try again or use Save Changes.', 'convertsell-toolkit' ),
 	) );
 }
 add_action( 'admin_enqueue_scripts', 'pot_admin_assets' );
@@ -287,7 +266,7 @@ function pot_checkbox_row( string $key, string $label, array $settings ): void {
 	?>
 	<tr>
 		<th scope="row"><label for="pot-setting-<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></label></th>
-		<td><label><input type="checkbox" id="pot-setting-<?php echo esc_attr( $key ); ?>" name="pot_settings[<?php echo esc_attr( $key ); ?>]" value="1" <?php checked( ! empty( $settings[ $key ] ) ); ?>> <?php esc_html_e( 'Enabled', 'purple-optimize-toolkit' ); ?></label></td>
+		<td><label><input type="checkbox" id="pot-setting-<?php echo esc_attr( $key ); ?>" name="pot_settings[<?php echo esc_attr( $key ); ?>]" value="1" <?php checked( ! empty( $settings[ $key ] ) ); ?>> <?php esc_html_e( 'Enabled', 'convertsell-toolkit' ); ?></label></td>
 	</tr>
 	<?php
 }
@@ -318,19 +297,19 @@ function pot_offer_product_issue_for_product( $product ): string {
 function pot_offer_product_issue_message( string $issue ): string {
 	switch ( $issue ) {
 		case 'not_selected':
-			return __( 'Select a published, in-stock simple product before enabling offers.', 'purple-optimize-toolkit' );
+			return __( 'Select a published, in-stock simple product before enabling offers.', 'convertsell-toolkit' );
 		case 'missing':
-			return __( 'The selected product no longer exists. Select a different product.', 'purple-optimize-toolkit' );
+			return __( 'The selected product no longer exists. Select a different product.', 'convertsell-toolkit' );
 		case 'not_simple':
-			return __( 'The selected product is not a simple product. Select a different simple product.', 'purple-optimize-toolkit' );
+			return __( 'The selected product is not a simple product. Select a different simple product.', 'convertsell-toolkit' );
 		case 'not_published':
-			return __( 'The selected product is not published. Publish it or select a different product.', 'purple-optimize-toolkit' );
+			return __( 'The selected product is not published. Publish it or select a different product.', 'convertsell-toolkit' );
 		case 'not_visible':
-			return __( 'The selected product is hidden from the catalog. Make it visible or select a different product.', 'purple-optimize-toolkit' );
+			return __( 'The selected product is hidden from the catalog. Make it visible or select a different product.', 'convertsell-toolkit' );
 		case 'not_purchasable':
-			return __( 'The selected product cannot currently be purchased. Update it or select a different product.', 'purple-optimize-toolkit' );
+			return __( 'The selected product cannot currently be purchased. Update it or select a different product.', 'convertsell-toolkit' );
 		case 'out_of_stock':
-			return __( 'The selected product is out of stock. Restock it or select a different product.', 'purple-optimize-toolkit' );
+			return __( 'The selected product is out of stock. Restock it or select a different product.', 'convertsell-toolkit' );
 		default:
 			return '';
 	}
@@ -369,16 +348,16 @@ function pot_product_select_row( string $key, string $label, array $settings, bo
 	<tr>
 		<th scope="row"><label for="pot-<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></label></th>
 		<td>
-			<select class="wc-product-search" id="pot-<?php echo esc_attr( $key ); ?>" name="pot_settings[<?php echo esc_attr( $key ); ?>]" style="width: 400px;" data-placeholder="<?php esc_attr_e( 'Search for a simple product…', 'purple-optimize-toolkit' ); ?>" data-action="woocommerce_json_search_products" data-allow_clear="true" aria-describedby="<?php echo esc_attr( $help_id . ( $issue ? ' ' . $warning_id : '' ) ); ?>">
+			<select class="wc-product-search" id="pot-<?php echo esc_attr( $key ); ?>" name="pot_settings[<?php echo esc_attr( $key ); ?>]" style="width: 400px;" data-placeholder="<?php esc_attr_e( 'Search for a simple product…', 'convertsell-toolkit' ); ?>" data-action="woocommerce_json_search_products" data-allow_clear="true" aria-describedby="<?php echo esc_attr( $help_id . ( $issue ? ' ' . $warning_id : '' ) ); ?>">
 				<?php if ( $product ) : ?>
 				<option value="<?php echo esc_attr( (string) $product_id ); ?>" selected><?php echo esc_html( wp_strip_all_tags( $product->get_formatted_name() ) ); ?></option>
 				<?php elseif ( $product_id ) : ?>
-				<option value="<?php echo esc_attr( (string) $product_id ); ?>" selected><?php echo esc_html( sprintf( __( 'Product #%d (missing)', 'purple-optimize-toolkit' ), $product_id ) ); ?></option>
+				<option value="<?php echo esc_attr( (string) $product_id ); ?>" selected><?php echo esc_html( sprintf( __( 'Product #%d (missing)', 'convertsell-toolkit' ), $product_id ) ); ?></option>
 				<?php endif; ?>
 			</select>
-			<p class="description" id="<?php echo esc_attr( $help_id ); ?>"><?php esc_html_e( 'Only a published, visible, purchasable, in-stock simple product can be offered.', 'purple-optimize-toolkit' ); ?></p>
+			<p class="description" id="<?php echo esc_attr( $help_id ); ?>"><?php esc_html_e( 'Only a published, visible, purchasable, in-stock simple product can be offered.', 'convertsell-toolkit' ); ?></p>
 			<?php if ( $issue ) : ?>
-				<p class="notice notice-error inline pot-offer-product-warning" id="<?php echo esc_attr( $warning_id ); ?>"><strong><?php esc_html_e( 'Offer unavailable:', 'purple-optimize-toolkit' ); ?></strong> <?php echo esc_html( pot_offer_product_issue_message( $issue ) ); ?></p>
+				<p class="notice notice-error inline pot-offer-product-warning" id="<?php echo esc_attr( $warning_id ); ?>"><strong><?php esc_html_e( 'Offer unavailable:', 'convertsell-toolkit' ); ?></strong> <?php echo esc_html( pot_offer_product_issue_message( $issue ) ); ?></p>
 			<?php endif; ?>
 		</td>
 	</tr>
@@ -436,9 +415,9 @@ function pot_enqueue_assets(): void {
 		return;
 	}
 	$category = is_product_category() ? get_queried_object_id() : 0;
-	wp_enqueue_style( 'purple-optimize-toolkit', POT_URL . 'assets/toolkit.css', array(), POT_VERSION );
+	wp_enqueue_style( 'convertsell-toolkit', POT_URL . 'assets/toolkit.css', array(), POT_VERSION );
 	wp_enqueue_script(
-		'purple-optimize-toolkit',
+		'convertsell-toolkit',
 		POT_URL . 'assets/toolkit.js',
 		array(),
 		POT_VERSION,
@@ -448,7 +427,7 @@ function pot_enqueue_assets(): void {
 		)
 	);
 	wp_localize_script(
-		'purple-optimize-toolkit',
+		'convertsell-toolkit',
 		'purpleOptimize',
 		array(
 			'features'          => pot_frontend_feature_flags( $settings ),
@@ -458,24 +437,24 @@ function pot_enqueue_assets(): void {
 			'wishlist'          => ! empty( $settings['wishlist'] ),
 			'freeShipping'      => (float) $settings['free_shipping_threshold'],
 			'currencySymbol'    => get_woocommerce_currency_symbol(),
-			'noResults'         => __( 'No matching products found.', 'purple-optimize-toolkit' ),
-			'searching'         => __( 'Searching…', 'purple-optimize-toolkit' ),
-			'addWishlist'       => __( 'Save to wishlist', 'purple-optimize-toolkit' ),
-			'removeWishlist'    => __( 'Remove from wishlist', 'purple-optimize-toolkit' ),
-			'copied'            => __( 'Copied', 'purple-optimize-toolkit' ),
-			'chooseOptions'     => __( 'Choose options', 'purple-optimize-toolkit' ),
-			'offerExpired'      => __( 'Offer expired', 'purple-optimize-toolkit' ),
+			'noResults'         => __( 'No matching products found.', 'convertsell-toolkit' ),
+			'searching'         => __( 'Searching…', 'convertsell-toolkit' ),
+			'addWishlist'       => __( 'Save to wishlist', 'convertsell-toolkit' ),
+			'removeWishlist'    => __( 'Remove from wishlist', 'convertsell-toolkit' ),
+			'copied'            => __( 'Copied', 'convertsell-toolkit' ),
+			'chooseOptions'     => __( 'Choose options', 'convertsell-toolkit' ),
+			'offerExpired'      => __( 'Offer expired', 'convertsell-toolkit' ),
 			'category'          => absint( $category ),
-			'requiredLabel'     => __( 'Required', 'purple-optimize-toolkit' ),
-			'optionalLabel'     => __( 'Optional', 'purple-optimize-toolkit' ),
-			'daysLabel'         => __( 'Days', 'purple-optimize-toolkit' ),
-			'hoursLabel'        => __( 'Hours', 'purple-optimize-toolkit' ),
-			'minutesLabel'      => __( 'Minutes', 'purple-optimize-toolkit' ),
-			'secondsLabel'      => __( 'Seconds', 'purple-optimize-toolkit' ),
+			'requiredLabel'     => __( 'Required', 'convertsell-toolkit' ),
+			'optionalLabel'     => __( 'Optional', 'convertsell-toolkit' ),
+			'daysLabel'         => __( 'Days', 'convertsell-toolkit' ),
+			'hoursLabel'        => __( 'Hours', 'convertsell-toolkit' ),
+			'minutesLabel'      => __( 'Minutes', 'convertsell-toolkit' ),
+			'secondsLabel'      => __( 'Seconds', 'convertsell-toolkit' ),
 			'cartUrl'           => wc_get_cart_url(),
-			'addedToCart'       => __( 'Added to cart ✓', 'purple-optimize-toolkit' ),
-			'freeShippingReached' => __( 'You reached the configured free-shipping threshold.', 'purple-optimize-toolkit' ),
-			'freeShippingRemaining' => __( 'Add %s more to reach the configured free-shipping threshold.', 'purple-optimize-toolkit' ),
+			'addedToCart'       => __( 'Added to cart ✓', 'convertsell-toolkit' ),
+			'freeShippingReached' => __( 'You reached the configured free-shipping threshold.', 'convertsell-toolkit' ),
+			'freeShippingRemaining' => __( 'Add %s more to reach the configured free-shipping threshold.', 'convertsell-toolkit' ),
 		)
 	);
 }
@@ -547,7 +526,7 @@ function pot_promotion_strip(): void {
 		return;
 	}
 	?>
-	<aside class="pot-promo has-global-padding is-layout-constrained" style="<?php echo esc_attr( $custom_style ); ?>" aria-label="<?php esc_attr_e( 'Store promotion', 'purple-optimize-toolkit' ); ?>">
+	<aside class="pot-promo has-global-padding is-layout-constrained" style="<?php echo esc_attr( $custom_style ); ?>" aria-label="<?php esc_attr_e( 'Store promotion', 'convertsell-toolkit' ); ?>">
 		<div class="pot-promo-inner alignwide">
 		<span><?php echo esc_html( (string) $settings['promo_text'] ); ?></span>
 		<?php if ( '' !== trim( (string) $settings['promo_code'] ) ) : ?>
@@ -569,7 +548,7 @@ add_action( 'wp_body_open', 'pot_promotion_strip', 5 );
  * @return array Parsed block with a default mini-cart behavior.
  */
 function pot_default_mini_cart_behavior( array $block ): array {
-	if ( 'purple-optimize' === get_stylesheet()
+	if ( in_array( get_stylesheet(), array( 'convertsell', 'purple-optimize' ), true )
 		&& 'woocommerce/mini-cart' === ( $block['blockName'] ?? '' )
 		&& ! array_key_exists( 'addToCartBehaviour', $block['attrs'] ?? array() ) ) {
 		$block['attrs']['addToCartBehaviour'] = 'open_drawer';
@@ -592,7 +571,7 @@ function pot_header_wishlist_link( string $html ): string {
 	if ( ! $url ) {
 		return $html;
 	}
-	$link = '<a class="pot-wishlist-link pot-header-wishlist" href="' . esc_url( $url ) . '"><span aria-hidden="true">♡</span><span class="screen-reader-text">' . esc_html__( 'Wishlist', 'purple-optimize-toolkit' ) . '</span> (<span class="pot-wishlist-count">0</span>)</a>';
+	$link = '<a class="pot-wishlist-link pot-header-wishlist" href="' . esc_url( $url ) . '"><span aria-hidden="true">♡</span><span class="screen-reader-text">' . esc_html__( 'Wishlist', 'convertsell-toolkit' ) . '</span> (<span class="pot-wishlist-count">0</span>)</a>';
 	return $link . $html;
 }
 add_filter( 'render_block_woocommerce/mini-cart', 'pot_header_wishlist_link' );
@@ -611,9 +590,9 @@ function pot_category_navigation(): void {
 	}
 	?>
 	<div class="pot-category-container has-global-padding is-layout-constrained">
-	<nav class="pot-category-nav alignwide" aria-label="<?php esc_attr_e( 'Shop categories', 'purple-optimize-toolkit' ); ?>">
-		<strong><?php esc_html_e( 'Shop categories', 'purple-optimize-toolkit' ); ?></strong>
-		<a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"><?php esc_html_e( 'All products', 'purple-optimize-toolkit' ); ?></a>
+	<nav class="pot-category-nav alignwide" aria-label="<?php esc_attr_e( 'Shop categories', 'convertsell-toolkit' ); ?>">
+		<strong><?php esc_html_e( 'Shop categories', 'convertsell-toolkit' ); ?></strong>
+		<a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"><?php esc_html_e( 'All products', 'convertsell-toolkit' ); ?></a>
 		<?php foreach ( $categories as $category ) : ?>
 		<a href="<?php echo esc_url( get_term_link( $category ) ); ?>" <?php echo is_product_category( $category->slug ) ? 'aria-current="page"' : ''; ?>><?php echo esc_html( $category->name ); ?></a>
 		<?php endforeach; ?>
@@ -654,7 +633,7 @@ function pot_checkout_help_link(): void {
 	printf(
 		'<a class="pot-checkout-help" href="%1$s">%2$s</a>',
 		esc_url( $url ),
-		esc_html__( 'Need help?', 'purple-optimize-toolkit' )
+		esc_html__( 'Need help?', 'convertsell-toolkit' )
 	);
 }
 add_action( 'wp_body_open', 'pot_checkout_help_link', 7 );
@@ -768,7 +747,7 @@ function pot_filter_sale_badge_block( string $content, array $block ): string {
 	if ( $percentage < 1 ) {
 		return $content;
 	}
-	return pot_presentation_sale_badge_html( $percentage, __( 'Save %d%%', 'purple-optimize-toolkit' ) );
+	return pot_presentation_sale_badge_html( $percentage, __( 'Save %d%%', 'convertsell-toolkit' ) );
 }
 add_filter( 'render_block', 'pot_filter_sale_badge_block', 10, 2 );
 
@@ -862,32 +841,32 @@ function pot_product_panel( WC_Product $product ): string {
 	?>
 	<section class="pot-buy-box" data-product-id="<?php echo esc_attr( (string) $product->get_id() ); ?>">
 		<?php if ( $reviews ) : ?>
-		<a class="pot-review-summary" href="#reviews" aria-label="<?php echo esc_attr( sprintf( _n( 'Rated %1$s out of 5 from %2$d review', 'Rated %1$s out of 5 from %2$d reviews', $reviews, 'purple-optimize-toolkit' ), $product->get_average_rating(), $reviews ) ); ?>">
-			<span aria-hidden="true">★★★★★</span> <strong><?php echo esc_html( $product->get_average_rating() ); ?>/5</strong> · <?php echo esc_html( sprintf( _n( '%d review', '%d reviews', $reviews, 'purple-optimize-toolkit' ), $reviews ) ); ?>
+		<a class="pot-review-summary" href="#reviews" aria-label="<?php echo esc_attr( sprintf( _n( 'Rated %1$s out of 5 from %2$d review', 'Rated %1$s out of 5 from %2$d reviews', $reviews, 'convertsell-toolkit' ), $product->get_average_rating(), $reviews ) ); ?>">
+			<span aria-hidden="true">★★★★★</span> <strong><?php echo esc_html( $product->get_average_rating() ); ?>/5</strong> · <?php echo esc_html( sprintf( _n( '%d review', '%d reviews', $reviews, 'convertsell-toolkit' ), $reviews ) ); ?>
 		</a>
 		<?php endif; ?>
 		<?php if ( null !== $stock && $stock > 0 && $stock <= (int) $settings['stock_threshold'] ) : ?>
-		<p class="pot-stock"><span aria-hidden="true">●</span> <?php echo esc_html( sprintf( _n( 'Only %d item left in stock', 'Only %d items left in stock', $stock, 'purple-optimize-toolkit' ), $stock ) ); ?></p>
+		<p class="pot-stock"><span aria-hidden="true">●</span> <?php echo esc_html( sprintf( _n( 'Only %d item left in stock', 'Only %d items left in stock', $stock, 'convertsell-toolkit' ), $stock ) ); ?></p>
 		<?php endif; ?>
 		<?php if ( $sale_end && $sale_end->getTimestamp() > time() ) : ?>
-		<p class="pot-countdown" data-end="<?php echo esc_attr( gmdate( 'c', $sale_end->getTimestamp() ) ); ?>"><span><?php esc_html_e( 'Scheduled offer ends in', 'purple-optimize-toolkit' ); ?></span> <strong data-countdown role="timer"></strong></p>
+		<p class="pot-countdown" data-end="<?php echo esc_attr( gmdate( 'c', $sale_end->getTimestamp() ) ); ?>"><span><?php esc_html_e( 'Scheduled offer ends in', 'convertsell-toolkit' ); ?></span> <strong data-countdown role="timer"></strong></p>
 		<?php endif; ?>
 		<?php if ( ! empty( $settings['wishlist'] ) ) : ?>
-		<button class="pot-wishlist-button wp-element-button" type="button" data-product="<?php echo esc_attr( (string) $product->get_id() ); ?>" data-title="<?php echo esc_attr( $product->get_name() ); ?>" data-url="<?php echo esc_url( $product->get_permalink() ); ?>" data-image="<?php echo esc_url( wp_get_attachment_image_url( $product->get_image_id(), 'woocommerce_thumbnail' ) ?: wc_placeholder_img_src( 'woocommerce_thumbnail' ) ); ?>" data-price="<?php echo esc_attr( wp_strip_all_tags( $product->get_price_html() ) ); ?>" aria-pressed="false">♡ <span><?php esc_html_e( 'Save to wishlist', 'purple-optimize-toolkit' ); ?></span></button>
+		<button class="pot-wishlist-button wp-element-button" type="button" data-product="<?php echo esc_attr( (string) $product->get_id() ); ?>" data-title="<?php echo esc_attr( $product->get_name() ); ?>" data-url="<?php echo esc_url( $product->get_permalink() ); ?>" data-image="<?php echo esc_url( wp_get_attachment_image_url( $product->get_image_id(), 'woocommerce_thumbnail' ) ?: wc_placeholder_img_src( 'woocommerce_thumbnail' ) ); ?>" data-price="<?php echo esc_attr( wp_strip_all_tags( $product->get_price_html() ) ); ?>" aria-pressed="false">♡ <span><?php esc_html_e( 'Save to wishlist', 'convertsell-toolkit' ); ?></span></button>
 		<?php endif; ?>
 		<?php if ( $guidance ) : ?>
-		<ul class="pot-reassurance" aria-label="<?php esc_attr_e( 'Purchase information', 'purple-optimize-toolkit' ); ?>">
+		<ul class="pot-reassurance" aria-label="<?php esc_attr_e( 'Purchase information', 'convertsell-toolkit' ); ?>">
 			<li><?php echo esc_html( (string) $settings['reassurance_one'] ); ?></li>
 			<li><?php echo esc_html( (string) $settings['reassurance_two'] ); ?></li>
 			<li><?php echo esc_html( (string) $settings['reassurance_three'] ); ?></li>
 		</ul>
 		<?php endif; ?>
 		<?php if ( $featured ) : ?>
-		<blockquote class="pot-featured-review"><p>“<?php echo esc_html( wp_trim_words( $featured[0]->comment_content, 24 ) ); ?>”</p><cite><?php echo esc_html( $featured[0]->comment_author ); ?> · <?php esc_html_e( 'approved review', 'purple-optimize-toolkit' ); ?></cite></blockquote>
+		<blockquote class="pot-featured-review"><p>“<?php echo esc_html( wp_trim_words( $featured[0]->comment_content, 24 ) ); ?>”</p><cite><?php echo esc_html( $featured[0]->comment_author ); ?> · <?php esc_html_e( 'approved review', 'convertsell-toolkit' ); ?></cite></blockquote>
 		<?php endif; ?>
 		<?php if ( $photo_credits ) : ?>
 		<details class="pot-photo-credits">
-			<summary><?php esc_html_e( 'Gallery photo credits', 'purple-optimize-toolkit' ); ?></summary>
+			<summary><?php esc_html_e( 'Gallery photo credits', 'convertsell-toolkit' ); ?></summary>
 			<ul>
 			<?php foreach ( $photo_credits as $credit ) : ?>
 				<li><a href="<?php echo esc_url( $credit['source_url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $credit['title'] ); ?></a> — <?php echo esc_html( $credit['creator'] ); ?>, <?php if ( $credit['license_url'] ) : ?><a href="<?php echo esc_url( $credit['license_url'] ); ?>" target="_blank" rel="license noopener"><?php echo esc_html( $credit['license'] ); ?></a><?php else : ?><?php echo esc_html( $credit['license'] ); ?><?php endif; ?></li>
@@ -956,11 +935,11 @@ function pot_recent_purchase_events( array $settings ): array {
 			}
 			$first_name = trim( $order->get_billing_first_name() );
 			$events[]   = array(
-				'name'  => $show_names && '' !== $first_name ? $first_name : __( 'Someone', 'purple-optimize-toolkit' ),
+				'name'  => $show_names && '' !== $first_name ? $first_name : __( 'Someone', 'convertsell-toolkit' ),
 				'title' => $product->get_name(),
 				'url'   => $product->get_permalink(),
 				'image' => wp_get_attachment_image_url( $product->get_image_id(), 'woocommerce_thumbnail' ) ?: wc_placeholder_img_src( 'woocommerce_thumbnail' ),
-				'time'  => human_time_diff( $order->get_date_created()->getTimestamp(), time() ) . ' ' . __( 'ago', 'purple-optimize-toolkit' ),
+				'time'  => human_time_diff( $order->get_date_created()->getTimestamp(), time() ) . ' ' . __( 'ago', 'convertsell-toolkit' ),
 			);
 			break;
 		}
@@ -1018,7 +997,7 @@ add_filter( 'template_include', 'pot_offer_template', 99 );
  * @return string
  */
 function pot_offer_document_title( string $title ): string {
-	return pot_is_offer_page() ? __( 'Special checkout offer', 'purple-optimize-toolkit' ) : $title;
+	return pot_is_offer_page() ? __( 'Special checkout offer', 'convertsell-toolkit' ) : $title;
 }
 add_filter( 'pre_get_document_title', 'pot_offer_document_title' );
 
@@ -1274,8 +1253,8 @@ function pot_handle_offer_funnel(): void {
 		$action = sanitize_key( wp_unslash( $_POST['pot_offer_action'] ?? '' ) );
 		if ( ! wp_verify_nonce( $nonce, 'pot_offer_' . $step ) ) {
 			wp_die(
-				esc_html__( 'This offer decision expired. Please return to checkout and try again.', 'purple-optimize-toolkit' ),
-				esc_html__( 'Offer session expired', 'purple-optimize-toolkit' ),
+				esc_html__( 'This offer decision expired. Please return to checkout and try again.', 'convertsell-toolkit' ),
+				esc_html__( 'Offer session expired', 'convertsell-toolkit' ),
 				array( 'response' => 403 )
 			);
 		}
@@ -1297,7 +1276,7 @@ function pot_handle_offer_funnel(): void {
 				WC()->cart->calculate_totals();
 				pot_finish_offer_funnel( $context, $source_order );
 			}
-			wc_add_notice( __( 'The offer product could not be added. Please try again or continue without it.', 'purple-optimize-toolkit' ), 'error' );
+			wc_add_notice( __( 'The offer product could not be added. Please try again or continue without it.', 'convertsell-toolkit' ), 'error' );
 		} else {
 			pot_reject_offer( $step, $settings, $context, $source_order );
 		}
@@ -1367,16 +1346,16 @@ function pot_render_inline_offer(): void {
 	<aside class="pot-inline-offer" aria-labelledby="pot-inline-offer-title">
 		<?php echo $product->get_image( 'woocommerce_thumbnail', array( 'loading' => 'lazy' ) ); ?>
 		<div class="pot-inline-offer-copy">
-			<span><?php echo esc_html( 'downsell' === $step ? __( 'One last option', 'purple-optimize-toolkit' ) : __( 'Optional checkout offer', 'purple-optimize-toolkit' ) ); ?></span>
+			<span><?php echo esc_html( 'downsell' === $step ? __( 'One last option', 'convertsell-toolkit' ) : __( 'Optional checkout offer', 'convertsell-toolkit' ) ); ?></span>
 			<h3 id="pot-inline-offer-title"><?php echo esc_html( $product->get_name() ); ?></h3>
-			<p><?php echo wp_kses_post( wc_price( (float) $product->get_price() * ( 1 - ( $discount / 100 ) ) ) ); ?> <del><?php echo wp_kses_post( wc_price( (float) $product->get_price() ) ); ?></del> · <?php echo esc_html( sprintf( __( '%d%% off', 'purple-optimize-toolkit' ), $discount ) ); ?></p>
-			<?php if ( $expiry ) : ?><p class="pot-offer-timer" data-offer-expiry="<?php echo esc_attr( (string) ( $expiry * 1000 ) ); ?>"><span><?php esc_html_e( 'Offer ends in', 'purple-optimize-toolkit' ); ?></span> <strong data-offer-countdown role="timer"></strong></p><?php endif; ?>
+			<p><?php echo wp_kses_post( wc_price( (float) $product->get_price() * ( 1 - ( $discount / 100 ) ) ) ); ?> <del><?php echo wp_kses_post( wc_price( (float) $product->get_price() ) ); ?></del> · <?php echo esc_html( sprintf( __( '%d%% off', 'convertsell-toolkit' ), $discount ) ); ?></p>
+			<?php if ( $expiry ) : ?><p class="pot-offer-timer" data-offer-expiry="<?php echo esc_attr( (string) ( $expiry * 1000 ) ); ?>"><span><?php esc_html_e( 'Offer ends in', 'convertsell-toolkit' ); ?></span> <strong data-offer-countdown role="timer"></strong></p><?php endif; ?>
 			<form class="pot-offer-actions" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="pot_inline_offer_decision">
 				<input type="hidden" name="pot_offer_step" value="<?php echo esc_attr( $step ); ?>">
 				<?php wp_nonce_field( 'pot_inline_offer_' . $step, 'pot_offer_nonce' ); ?>
-				<button class="pot-offer-accept wp-element-button" type="submit" name="pot_offer_action" value="accept"><?php esc_html_e( 'Add this offer', 'purple-optimize-toolkit' ); ?></button>
-				<button class="pot-offer-reject wp-element-button" type="submit" name="pot_offer_action" value="reject"><?php esc_html_e( 'No thanks', 'purple-optimize-toolkit' ); ?></button>
+				<button class="pot-offer-accept wp-element-button" type="submit" name="pot_offer_action" value="accept"><?php esc_html_e( 'Add this offer', 'convertsell-toolkit' ); ?></button>
+				<button class="pot-offer-reject wp-element-button" type="submit" name="pot_offer_action" value="reject"><?php esc_html_e( 'No thanks', 'convertsell-toolkit' ); ?></button>
 			</form>
 		</div>
 	</aside>
@@ -1464,8 +1443,8 @@ add_action( 'woocommerce_before_calculate_totals', 'pot_apply_offer_prices', 20 
 function pot_offer_item_data( array $data, array $cart_item ): array {
 	if ( isset( $cart_item['pot_offer_discount'] ) ) {
 		$data[] = array(
-			'key'   => __( 'Exclusive offer', 'purple-optimize-toolkit' ),
-			'value' => sprintf( __( '%d%% off', 'purple-optimize-toolkit' ), (int) $cart_item['pot_offer_discount'] ),
+			'key'   => __( 'Exclusive offer', 'convertsell-toolkit' ),
+			'value' => sprintf( __( '%d%% off', 'convertsell-toolkit' ), (int) $cart_item['pot_offer_discount'] ),
 		);
 	}
 	return $data;
@@ -1481,7 +1460,7 @@ add_filter( 'woocommerce_get_item_data', 'pot_offer_item_data', 10, 2 );
  */
 function pot_offer_order_item_meta( WC_Order_Item_Product $item, string $cart_item_key, array $values ): void {
 	if ( isset( $values['pot_offer_discount'] ) ) {
-		$item->add_meta_data( __( 'Exclusive offer', 'purple-optimize-toolkit' ), sprintf( __( '%d%% off', 'purple-optimize-toolkit' ), (int) $values['pot_offer_discount'] ), true );
+		$item->add_meta_data( __( 'Exclusive offer', 'convertsell-toolkit' ), sprintf( __( '%d%% off', 'convertsell-toolkit' ), (int) $values['pot_offer_discount'] ), true );
 	}
 }
 add_action( 'woocommerce_checkout_create_order_line_item', 'pot_offer_order_item_meta', 10, 3 );
@@ -1535,13 +1514,13 @@ function pot_policy_links(): array {
 	$privacy  = (int) get_option( 'wp_page_for_privacy_policy' );
 	$terms    = (int) get_option( 'woocommerce_terms_page_id' );
 	if ( $shipping instanceof WP_Post && 'publish' === $shipping->post_status ) {
-		$links[ __( 'Shipping & returns', 'purple-optimize-toolkit' ) ] = get_permalink( $shipping );
+		$links[ __( 'Shipping & returns', 'convertsell-toolkit' ) ] = get_permalink( $shipping );
 	}
 	if ( $privacy && 'publish' === get_post_status( $privacy ) ) {
-		$links[ __( 'Privacy policy', 'purple-optimize-toolkit' ) ] = get_permalink( $privacy );
+		$links[ __( 'Privacy policy', 'convertsell-toolkit' ) ] = get_permalink( $privacy );
 	}
 	if ( $terms && 'publish' === get_post_status( $terms ) ) {
-		$links[ __( 'Terms & conditions', 'purple-optimize-toolkit' ) ] = get_permalink( $terms );
+		$links[ __( 'Terms & conditions', 'convertsell-toolkit' ) ] = get_permalink( $terms );
 	}
 	return $links;
 }
@@ -1556,9 +1535,9 @@ function pot_checkout_trust_panel(): void {
 	}
 	$links = pot_policy_links();
 	?>
-	<aside class="pot-checkout-trust" aria-label="<?php esc_attr_e( 'Before checkout', 'purple-optimize-toolkit' ); ?>">
-		<strong><?php esc_html_e( 'Ready for checkout?', 'purple-optimize-toolkit' ); ?></strong>
-		<span><?php esc_html_e( 'Review delivery and store policies now. Shipping, payment options, and the final total are confirmed at checkout.', 'purple-optimize-toolkit' ); ?></span>
+	<aside class="pot-checkout-trust" aria-label="<?php esc_attr_e( 'Before checkout', 'convertsell-toolkit' ); ?>">
+		<strong><?php esc_html_e( 'Ready for checkout?', 'convertsell-toolkit' ); ?></strong>
+		<span><?php esc_html_e( 'Review delivery and store policies now. Shipping, payment options, and the final total are confirmed at checkout.', 'convertsell-toolkit' ); ?></span>
 		<?php foreach ( $links as $label => $url ) : ?><a href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $label ); ?></a><?php endforeach; ?>
 	</aside>
 	<?php
@@ -1574,7 +1553,7 @@ function pot_footer_policy_links(): void {
 		return;
 	}
 	?>
-	<nav class="pot-footer-policies" aria-label="<?php esc_attr_e( 'Store policies', 'purple-optimize-toolkit' ); ?>">
+	<nav class="pot-footer-policies" aria-label="<?php esc_attr_e( 'Store policies', 'convertsell-toolkit' ); ?>">
 		<?php foreach ( $links as $label => $url ) : ?><a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $label ); ?></a><?php endforeach; ?>
 	</nav>
 	<?php
@@ -1590,8 +1569,8 @@ function pot_account_invitation(): void {
 	}
 	?>
 	<aside class="pot-account-invitation">
-		<div><strong><?php esc_html_e( 'Save time on your next visit', 'purple-optimize-toolkit' ); ?></strong><span><?php esc_html_e( 'Create an account after checkout to keep addresses and order history together.', 'purple-optimize-toolkit' ); ?></span></div>
-		<a class="wp-element-button" href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>"><?php esc_html_e( 'Create an account', 'purple-optimize-toolkit' ); ?></a>
+		<div><strong><?php esc_html_e( 'Save time on your next visit', 'convertsell-toolkit' ); ?></strong><span><?php esc_html_e( 'Create an account after checkout to keep addresses and order history together.', 'convertsell-toolkit' ); ?></span></div>
+		<a class="wp-element-button" href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>"><?php esc_html_e( 'Create an account', 'convertsell-toolkit' ); ?></a>
 	</aside>
 	<?php
 }
@@ -1614,8 +1593,8 @@ function pot_footer_helpers(): void {
 			?>
 		<aside class="pot-social-proof" data-events="<?php echo esc_attr( wp_json_encode( $events ) ); ?>" aria-live="polite" aria-atomic="true" hidden>
 			<img src="" alt="">
-			<div><span><?php esc_html_e( 'Recent purchase', 'purple-optimize-toolkit' ); ?></span><p></p><small></small></div>
-			<button type="button" aria-label="<?php esc_attr_e( 'Dismiss recent purchases', 'purple-optimize-toolkit' ); ?>">&times;</button>
+			<div><span><?php esc_html_e( 'Recent purchase', 'convertsell-toolkit' ); ?></span><p></p><small></small></div>
+			<button type="button" aria-label="<?php esc_attr_e( 'Dismiss recent purchases', 'convertsell-toolkit' ); ?>">&times;</button>
 		</aside>
 			<?php
 		}
@@ -1628,7 +1607,7 @@ function pot_footer_helpers(): void {
 		$progress  = min( 100, ( $subtotal / $threshold ) * 100 );
 		?>
 		<section id="pot-shipping-progress" class="pot-shipping-progress" data-target="<?php echo esc_attr( (string) $threshold ); ?>" aria-live="polite" aria-atomic="true">
-			<p><?php echo $remaining > 0 ? wp_kses_post( sprintf( __( 'Add %s more to reach the configured free-shipping threshold.', 'purple-optimize-toolkit' ), wc_price( $remaining ) ) ) : esc_html__( 'You reached the configured free-shipping threshold.', 'purple-optimize-toolkit' ); ?></p>
+			<p><?php echo $remaining > 0 ? wp_kses_post( sprintf( __( 'Add %s more to reach the configured free-shipping threshold.', 'convertsell-toolkit' ), wc_price( $remaining ) ) ) : esc_html__( 'You reached the configured free-shipping threshold.', 'convertsell-toolkit' ); ?></p>
 			<div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo esc_attr( (string) round( $progress ) ); ?>"><span style="width:<?php echo esc_attr( (string) $progress ); ?>%"></span></div>
 		</section>
 		<?php
@@ -1640,7 +1619,7 @@ function pot_footer_helpers(): void {
 			?>
 		<aside class="pot-sticky-cart" aria-hidden="true" data-product-type="<?php echo esc_attr( $product->get_type() ); ?>">
 			<div><?php echo $product->get_image( 'woocommerce_thumbnail', array( 'loading' => 'lazy' ) ); ?><span><strong><?php echo esc_html( $product->get_name() ); ?></strong><span><?php echo wp_kses_post( $product->get_price_html() ); ?></span></span></div>
-			<button type="button" class="wp-element-button"><span class="pot-sticky-cart-label"><?php echo esc_html( $product->is_type( 'simple' ) ? $product->single_add_to_cart_text() : __( 'Choose options', 'purple-optimize-toolkit' ) ); ?></span></button>
+			<button type="button" class="wp-element-button"><span class="pot-sticky-cart-label"><?php echo esc_html( $product->is_type( 'simple' ) ? $product->single_add_to_cart_text() : __( 'Choose options', 'convertsell-toolkit' ) ); ?></span></button>
 			<span class="pot-sticky-cart-status screen-reader-text" role="status" aria-live="polite" aria-atomic="true"></span>
 		</aside>
 		<?php
@@ -1655,7 +1634,7 @@ add_action( 'wp_footer', 'pot_footer_policy_links', 30 );
  * Add a product-content readiness checklist to the editor.
  */
 function pot_product_readiness_meta_box(): void {
-	add_meta_box( 'pot-product-readiness', __( 'Conversion readiness', 'purple-optimize-toolkit' ), 'pot_render_product_readiness_meta_box', 'product', 'side', 'default' );
+	add_meta_box( 'pot-product-readiness', __( 'Conversion readiness', 'convertsell-toolkit' ), 'pot_render_product_readiness_meta_box', 'product', 'side', 'default' );
 }
 add_action( 'add_meta_boxes_product', 'pot_product_readiness_meta_box' );
 
@@ -1671,15 +1650,15 @@ function pot_render_product_readiness_meta_box( WP_Post $post ): void {
 	}
 	$image_count = ( $product->get_image_id() ? 1 : 0 ) + count( $product->get_gallery_image_ids() );
 	$checks = array(
-		array( $image_count >= 3, sprintf( __( '%d product images (aim for at least 3 useful angles)', 'purple-optimize-toolkit' ), $image_count ) ),
-		array( '' !== trim( $product->get_short_description() ), __( 'Scannable short description', 'purple-optimize-toolkit' ) ),
-		array( '' !== trim( $product->get_description() ), __( 'Detailed description and specifications', 'purple-optimize-toolkit' ) ),
+		array( $image_count >= 3, sprintf( __( '%d product images (aim for at least 3 useful angles)', 'convertsell-toolkit' ), $image_count ) ),
+		array( '' !== trim( $product->get_short_description() ), __( 'Scannable short description', 'convertsell-toolkit' ) ),
+		array( '' !== trim( $product->get_description() ), __( 'Detailed description and specifications', 'convertsell-toolkit' ) ),
 	);
 	echo '<ul class="pot-readiness-checklist">';
 	foreach ( $checks as $check ) {
 		echo '<li><span aria-hidden="true">' . ( $check[0] ? '✓' : '○' ) . '</span> ' . esc_html( $check[1] ) . '</li>';
 	}
-	echo '</ul><p class="description">' . esc_html__( 'Use accurate images, scale/context, and product-specific copy. This checklist does not replace content review.', 'purple-optimize-toolkit' ) . '</p>';
+	echo '</ul><p class="description">' . esc_html__( 'Use accurate images, scale/context, and product-specific copy. This checklist does not replace content review.', 'convertsell-toolkit' ) . '</p>';
 }
 
 /**
@@ -1689,16 +1668,23 @@ function pot_render_product_readiness_meta_box( WP_Post $post ): void {
  */
 function pot_wishlist_page_id(): int {
 	$saved = get_post( (int) get_option( 'pot_wishlist_page_id', 0 ) );
-	if ( $saved instanceof WP_Post && 'page' === $saved->post_type && 'publish' === $saved->post_status && ! $saved->post_password && has_shortcode( $saved->post_content, 'purple_optimize_wishlist' ) ) {
+	if ( $saved instanceof WP_Post && 'page' === $saved->post_type && 'publish' === $saved->post_status && ! $saved->post_password && pot_has_wishlist_shortcode( $saved->post_content ) ) {
 		return (int) $saved->ID;
 	}
-	$pages = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 's' => 'purple_optimize_wishlist', 'posts_per_page' => -1 ) );
-	foreach ( $pages as $page ) {
-		if ( ! $page->post_password && has_shortcode( $page->post_content, 'purple_optimize_wishlist' ) ) {
-			return (int) $page->ID;
+	foreach ( array( 'convertsell_wishlist', 'purple_optimize_wishlist' ) as $shortcode ) {
+		$pages = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 's' => $shortcode, 'posts_per_page' => -1 ) );
+		foreach ( $pages as $page ) {
+			if ( ! $page->post_password && pot_has_wishlist_shortcode( $page->post_content ) ) {
+				return (int) $page->ID;
+			}
 		}
 	}
 	return 0;
+}
+
+/** Published legacy wishlist pages remain valid after the distribution rename. */
+function pot_has_wishlist_shortcode( string $content ): bool {
+	return has_shortcode( $content, 'convertsell_wishlist' ) || has_shortcode( $content, 'purple_optimize_wishlist' );
 }
 
 /** Return the real published wishlist destination without assuming its slug. */
@@ -1720,9 +1706,9 @@ function pot_ensure_wishlist_page(): void {
 		$id = wp_insert_post( array(
 			'post_type' => 'page',
 			'post_status' => 'publish',
-			'post_title' => __( 'Wishlist', 'purple-optimize-toolkit' ),
+			'post_title' => __( 'Wishlist', 'convertsell-toolkit' ),
 			'post_name' => 'wishlist',
-			'post_content' => '<!-- wp:shortcode -->[purple_optimize_wishlist]<!-- /wp:shortcode -->',
+			'post_content' => '<!-- wp:shortcode -->[convertsell_wishlist]<!-- /wp:shortcode -->',
 		), true );
 	}
 	if ( ! is_wp_error( $id ) && $id ) {
@@ -1738,6 +1724,7 @@ add_action( 'update_option_pot_settings', 'pot_ensure_wishlist_page' );
  * @return string
  */
 function pot_wishlist_shortcode(): string {
-	return '<div class="pot-wishlist-page" data-empty="' . esc_attr__( 'Your wishlist is empty.', 'purple-optimize-toolkit' ) . '"><p>' . esc_html__( 'Loading wishlist…', 'purple-optimize-toolkit' ) . '</p></div>';
+	return '<div class="pot-wishlist-page" data-empty="' . esc_attr__( 'Your wishlist is empty.', 'convertsell-toolkit' ) . '"><p>' . esc_html__( 'Loading wishlist…', 'convertsell-toolkit' ) . '</p></div>';
 }
-add_shortcode( 'purple_optimize_wishlist', 'pot_wishlist_shortcode' );
+add_shortcode( 'convertsell_wishlist', 'pot_wishlist_shortcode' );
+add_shortcode( 'purple_optimize_wishlist', 'pot_wishlist_shortcode' ); // Published content compatibility.

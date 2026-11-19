@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import vm from 'node:vm';
-const plugin = new URL('../wp-content/plugins/purple-optimize-toolkit/', import.meta.url);
-const php = readFileSync(new URL('purple-optimize-toolkit.php', plugin), 'utf8');
+const plugin = new URL('../wp-content/plugins/convertsell-toolkit/', import.meta.url);
+const php = readFileSync(new URL('includes/runtime.php', plugin), 'utf8');
 const offerControls = readFileSync(new URL('includes/admin-offers.php', plugin), 'utf8');
 const js = readFileSync(new URL('assets/admin-offer-toggle.js', plugin), 'utf8');
 

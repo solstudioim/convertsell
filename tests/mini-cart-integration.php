@@ -8,7 +8,7 @@ $expect = static function ( $condition, $message ) {
 		throw new RuntimeException( $message );
 	}
 };
-$expect( 'purple-optimize' === get_stylesheet(), 'Activate Purple Optimize for this test.' );
+$expect( 'convertsell' === get_stylesheet(), 'Activate ConvertSell for this test.' );
 $handler = 'data-wp-on-document--wc-blocks_added_to_cart---open-drawer';
 $expect( false !== strpos( do_blocks( '<!-- wp:woocommerce/mini-cart /-->' ), $handler ), 'Unconfigured native cart must open after adding.' );
 $expect( false === strpos( do_blocks( '<!-- wp:woocommerce/mini-cart {"addToCartBehaviour":"none"} /-->' ), $handler ), 'Explicit none must remain closed after adding.' );

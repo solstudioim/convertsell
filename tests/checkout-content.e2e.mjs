@@ -20,7 +20,7 @@ try {
 	await admin.addCookies([{ name: auth.name, value: auth.cookie, url: site }, { name: auth.adminName, value: auth.adminCookie, url: site }]);
 	const page = await admin.newPage();
 	page.setDefaultTimeout(20000);
-	await page.goto(`${site}/wp-admin/admin.php?page=purple-optimize&section=checkout`, { waitUntil: 'domcontentloaded' });
+	await page.goto(`${site}/wp-admin/admin.php?page=convertsell&section=checkout`, { waitUntil: 'domcontentloaded' });
 	assert.equal(await page.locator('#pot_checkout_content').count(), 0, 'Old rich-text editor removed.');
 	const invalid = await admin.request.get(`${site}/wp-admin/admin-post.php?action=pot_edit_checkout_content&_wpnonce=invalid`);
 	assert.equal(invalid.status(), 403);
@@ -93,7 +93,7 @@ try {
 	await panel.screenshot({ path: `${out}/checkout-mobile.png` });
 	// Settings save must preserve both the legacy backup and the published document.
 	const source = wp('echo hash("sha256",pot_checkout_content_source());');
-	await page.goto(`${site}/wp-admin/admin.php?page=purple-optimize&section=checkout`, { waitUntil: 'domcontentloaded' });
+	await page.goto(`${site}/wp-admin/admin.php?page=convertsell&section=checkout`, { waitUntil: 'domcontentloaded' });
 	await page.locator('[name="pot_checkout_settings[content_enabled]"]').uncheck();
 	await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), page.locator('#pot-checkout-settings input[type="submit"]').click()]);
 	assert.equal(wp('echo hash("sha256",pot_checkout_content_source());'), source);

@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 const read = (file) => fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8');
-const child = read('wp-content/themes/purple-optimize/style.css');
-const css = read('wp-content/plugins/purple-optimize-toolkit/assets/toolkit.css');
+const child = read('wp-content/themes/convertsell/style.css');
+const css = read('wp-content/plugins/convertsell-toolkit/assets/toolkit.css');
 
 test('child stylesheet contains metadata only', () => {
  assert.equal(child.replace(/\/\*[\s\S]*?\*\//g, '').trim(), '');
@@ -28,7 +28,7 @@ test('sticky checkout changes require the explicit opt-in body class', () => {
 
 test('checkout content inherits storefront typography', () => {
  for (const name of ['checkout-extras.css', 'checkout-content.css']) {
-  const source = read('wp-content/plugins/purple-optimize-toolkit/assets/' + name);
+  const source = read('wp-content/plugins/convertsell-toolkit/assets/' + name);
   assert.doesNotMatch(source, /font-family:|#[0-9a-f]{3,8}\b|\.editor-styles-wrapper/i);
  }
 });

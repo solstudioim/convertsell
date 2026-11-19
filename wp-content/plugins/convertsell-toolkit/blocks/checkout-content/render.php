@@ -2,7 +2,7 @@
 /**
  * Native Checkout hydration placeholder for sanitized merchant content.
  *
- * @package PurpleOptimizeToolkit
+ * @package ConvertSellToolkit
  * @since 0.8.0
  */
 defined( 'ABSPATH' ) || exit;

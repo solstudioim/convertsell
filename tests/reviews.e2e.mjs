@@ -23,7 +23,7 @@ try {
  await page.locator('#user_login').fill(process.env.POT_TEST_USER || 'compat');
  await page.locator('#user_pass').fill(process.env.POT_TEST_PASSWORD || 'local-development-only');
  await Promise.all([page.waitForURL((url) => !url.pathname.endsWith('wp-login.php')), page.locator('#wp-submit').click()]);
- await page.goto(`${site}/wp-admin/admin.php?page=purple-optimize&section=privacy`);
+ await page.goto(`${site}/wp-admin/admin.php?page=convertsell&section=privacy`);
  await page.getByRole('heading', { name: 'Social proof', exact: true }).waitFor();
  await page.getByRole('heading', { name: 'Recent purchases', exact: true }).waitFor();
  await page.getByRole('heading', { name: 'Reviews & testimonials', exact: true }).waitFor();

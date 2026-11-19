@@ -19,7 +19,7 @@ try{
  await page.locator('#user_login').fill(process.env.POT_TEST_USER || 'compat');
  await page.locator('#user_pass').fill(process.env.POT_TEST_PASSWORD || 'local-development-only');
  await Promise.all([page.waitForURL(url=>!url.pathname.endsWith('wp-login.php')),page.locator('#wp-submit').click()]);
- await page.goto(`${site}/wp-admin/admin.php?page=purple-optimize&section=storefront`);
+ await page.goto(`${site}/wp-admin/admin.php?page=convertsell&section=storefront`);
  const unchanged=JSON.parse(wp('echo wp_json_encode(pot_settings());'));delete unchanged.promo_background;
  for(const [color,background,text] of [['#f7d96b','rgb(247, 217, 107)','rgb(0, 0, 0)'],['#123456','rgb(18, 52, 86)','rgb(255, 255, 255)']]){
   await page.locator('.wp-color-result').click();

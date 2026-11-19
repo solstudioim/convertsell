@@ -6,7 +6,7 @@ $original_page = get_option( 'pot_wishlist_page_id', null );
 $original_user = get_current_user_id();
 $created = 0;
 $force_missing = static function ( $posts, $query ) {
-	return 'purple_optimize_wishlist' === $query->get( 's' ) ? array() : $posts;
+	return in_array( $query->get( 's' ), array( 'convertsell_wishlist', 'purple_optimize_wishlist' ), true ) ? array() : $posts;
 };
 $expect = static function ( $condition, $message ) { if ( ! $condition ) { throw new RuntimeException( $message ); } };
 try {
@@ -25,9 +25,12 @@ try {
 	$created = (int) get_option( 'pot_wishlist_page_id' );
 	$expect( $created > 0, 'Enabling wishlist must create a published destination.' );
 	$expect( 'publish' === get_post_status( $created ), 'Destination must be published.' );
-	$expect( has_shortcode( get_post_field( 'post_content', $created ), 'purple_optimize_wishlist' ), 'Destination needs the shortcode.' );
+	$expect( has_shortcode( get_post_field( 'post_content', $created ), 'convertsell_wishlist' ), 'New destinations need the ConvertSell shortcode.' );
 	pot_ensure_wishlist_page();
 	$expect( $created === (int) get_option( 'pot_wishlist_page_id' ), 'Repeated provisioning must reuse the page.' );
+	wp_update_post( array( 'ID' => $created, 'post_content' => '<!-- wp:shortcode -->[purple_optimize_wishlist]<!-- /wp:shortcode -->' ) );
+	pot_ensure_wishlist_page();
+	$expect( $created === (int) get_option( 'pot_wishlist_page_id' ), 'Published legacy wishlist pages must also be reused.' );
 	wp_update_post( array( 'ID' => $created, 'post_name' => 'saved-items-local-test' ) );
 	$expect( get_permalink( $created ) === pot_wishlist_url(), 'Toolbar must follow the actual page permalink.' );
 	wp_set_current_user( 0 );

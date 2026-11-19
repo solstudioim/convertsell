@@ -2,18 +2,18 @@
 
 ## Package scope
 
-Submit only the `purple-optimize` child-theme directory. Do not include the
-Purple parent theme, Purple Optimize Toolkit, demo tools, repository metadata,
+Submit only the `convertsell` child-theme directory. Do not include the
+Purple parent theme, ConvertSell Toolkit, demo tools, repository metadata,
 performance captures, or environment files.
 
 Build the ZIP from a committed release after creating and checking the resolved
-`/Users/sol/Codex/artifacts/purple-cro-optimized/` destination:
+`/Users/sol/Codex/artifacts/convertsell/` destination:
 
 ```sh
 git archive --format=zip \
-  --prefix=purple-optimize/ \
-  -o /Users/sol/Codex/artifacts/purple-cro-optimized/purple-optimize-0.6.0.zip \
-  HEAD:wp-content/themes/purple-optimize
+  --prefix=convertsell/ \
+  -o /Users/sol/Codex/artifacts/convertsell/convertsell-0.7.0.zip \
+  HEAD:wp-content/themes/convertsell
 ```
 
 ## Upstream and licensing
@@ -29,7 +29,7 @@ git archive --format=zip \
 
 - Confirm `style.css`, `templates/index.html`, `theme.json`, `readme.txt`, and
   `screenshot.png` are present in the ZIP.
-- Confirm the ZIP has one top-level `purple-optimize/` directory.
+- Confirm the ZIP has one top-level `convertsell/` directory.
 - Run the current Theme Check plugin against the release candidate.
 - Test with the official Theme Unit Test content.
 - Test activation with Purple installed and with WooCommerce both active and
@@ -38,18 +38,16 @@ git archive --format=zip \
   translation strings.
 - Confirm the WordPress.org contributor username in `readme.txt` before upload.
 
-## Confirm with the Themes Team before upload
+## Directory submission checks
 
-1. Purple is maintained in WooCommerce's public `woocommerce/woocommerce`
-   repository. Confirm whether the parent must be accepted into the WordPress.org
-   Theme Directory first so dependency installation and review can work
-   correctly.
-2. Reviewer guidance says child-theme names should not contain the parent-theme
-   name. Confirm whether `Purple Optimize` is acceptable or select a distinct
-   public name and slug before the first submission.
-
-These are submission blockers, not packaging failures. Ask in the WordPress.org
-`#themes` Slack channel before reserving a name or uploading the ZIP.
+- Parent Purple is listed at https://wordpress.org/themes/purple/.
+- Submit under the distinct name **ConvertSell**, slug/text domain `convertsell`.
+  Keep `Template: purple` and parent attribution intact.
+- ConvertSell name/slug acceptance and trademark clearance are not established by
+  this repository rename. Check availability and similar marks before submission.
+- The review handbook's draft guidance discourages the parent's name in a child
+  name; the required naming rules leave similarity decisions to the Themes Team.
+- Do not claim Theme Directory approval until the actual package is accepted.
 
 The current GitHub distribution includes an explicit companion installer. Before
 Theme Directory submission, replace that recommendation/installer with the

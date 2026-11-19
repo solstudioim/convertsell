@@ -69,7 +69,7 @@ function pot_reviews_shortcode( $attributes = array() ): string {
 	$rotator = 'rotator' === $config['layout'] && count( $reviews ) > 1;
 	ob_start();
 	?>
-	<section class="pot-testimonials" aria-label="<?php esc_attr_e( 'Customer reviews', 'purple-optimize-toolkit' ); ?>"<?php if ( $rotator ) : ?> data-pot-review-rotator data-autoplay="<?php echo esc_attr( (string) $config['autoplay'] ); ?>"<?php endif; ?>>
+	<section class="pot-testimonials" aria-label="<?php esc_attr_e( 'Customer reviews', 'convertsell-toolkit' ); ?>"<?php if ( $rotator ) : ?> data-pot-review-rotator data-autoplay="<?php echo esc_attr( (string) $config['autoplay'] ); ?>"<?php endif; ?>>
 	<?php if ( $config['heading'] ) : ?><h3 class="pot-testimonials-heading"><?php echo esc_html( $config['heading'] ); ?></h3><?php endif; ?>
 	<div class="pot-testimonials-stage<?php echo $rotator && $config['autoplay'] ? ' pot-has-review-autoplay' : ''; ?>">
 	<div class="pot-testimonials-items">
@@ -77,33 +77,34 @@ function pot_reviews_shortcode( $attributes = array() ): string {
 		$rating = min( 5, max( 0, (int) get_comment_meta( $review->comment_ID, 'rating', true ) ) );
 		$name = sanitize_text_field( $review->comment_author );
 		$name = preg_split( '/\s+/u', trim( $name ) )[0] ?? '';
-		if ( 'anonymous' === $config['author'] || ! $name || is_email( $review->comment_author ) ) { $name = __( 'Customer', 'purple-optimize-toolkit' ); }
+		if ( 'anonymous' === $config['author'] || ! $name || is_email( $review->comment_author ) ) { $name = __( 'Customer', 'convertsell-toolkit' ); }
 		?>
 		<figure class="pot-testimonial">
-		<?php if ( $rating ) : ?><div class="pot-testimonial-rating" role="img" aria-label="<?php echo esc_attr( sprintf( __( '%d out of 5 stars', 'purple-optimize-toolkit' ), $rating ) ); ?>"><span aria-hidden="true"><?php echo esc_html( str_repeat( '★', $rating ) . str_repeat( '☆', 5 - $rating ) ); ?></span></div><?php endif; ?>
+		<?php if ( $rating ) : ?><div class="pot-testimonial-rating" role="img" aria-label="<?php echo esc_attr( sprintf( __( '%d out of 5 stars', 'convertsell-toolkit' ), $rating ) ); ?>"><span aria-hidden="true"><?php echo esc_html( str_repeat( '★', $rating ) . str_repeat( '☆', 5 - $rating ) ); ?></span></div><?php endif; ?>
 		<blockquote><?php echo wpautop( esc_html( wp_strip_all_tags( $review->comment_content ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></blockquote>
 		<figcaption><span class="pot-testimonial-author"><?php echo esc_html( $name ); ?></span>
-		<?php if ( function_exists( 'wc_review_is_from_verified_owner' ) && wc_review_is_from_verified_owner( $review->comment_ID ) ) : ?><span class="pot-testimonial-verified"><?php esc_html_e( 'Verified owner', 'purple-optimize-toolkit' ); ?></span><?php endif; ?>
+		<?php if ( function_exists( 'wc_review_is_from_verified_owner' ) && wc_review_is_from_verified_owner( $review->comment_ID ) ) : ?><span class="pot-testimonial-verified"><?php esc_html_e( 'Verified owner', 'convertsell-toolkit' ); ?></span><?php endif; ?>
 		<a href="<?php echo esc_url( get_permalink( $review->comment_post_ID ) . '#reviews' ); ?>"><?php echo esc_html( get_the_title( $review->comment_post_ID ) ); ?></a></figcaption>
 		</figure>
 	<?php endforeach; ?>
 	</div>
 	<?php if ( $rotator ) : ?><div class="pot-testimonials-controls" hidden>
-	<button type="button" class="pot-review-arrow" data-review-previous aria-label="<?php esc_attr_e( 'Previous review', 'purple-optimize-toolkit' ); ?>"><span aria-hidden="true">‹</span></button>
-	<span class="pot-testimonials-position" role="status" aria-live="polite" data-position-template="<?php esc_attr_e( '%1$d of %2$d', 'purple-optimize-toolkit' ); ?>"></span>
-	<button type="button" class="pot-review-arrow" data-review-next aria-label="<?php esc_attr_e( 'Next review', 'purple-optimize-toolkit' ); ?>"><span aria-hidden="true">›</span></button>
-	<?php if ( $config['autoplay'] ) : ?><button type="button" class="pot-review-play" data-review-play aria-label="<?php esc_attr_e( 'Pause rotation', 'purple-optimize-toolkit' ); ?>" aria-pressed="true" data-play-label="<?php esc_attr_e( 'Play rotation', 'purple-optimize-toolkit' ); ?>" data-pause-label="<?php esc_attr_e( 'Pause rotation', 'purple-optimize-toolkit' ); ?>"><span aria-hidden="true">Ⅱ</span></button><?php endif; ?>
+	<button type="button" class="pot-review-arrow" data-review-previous aria-label="<?php esc_attr_e( 'Previous review', 'convertsell-toolkit' ); ?>"><span aria-hidden="true">‹</span></button>
+	<span class="pot-testimonials-position" role="status" aria-live="polite" data-position-template="<?php esc_attr_e( '%1$d of %2$d', 'convertsell-toolkit' ); ?>"></span>
+	<button type="button" class="pot-review-arrow" data-review-next aria-label="<?php esc_attr_e( 'Next review', 'convertsell-toolkit' ); ?>"><span aria-hidden="true">›</span></button>
+	<?php if ( $config['autoplay'] ) : ?><button type="button" class="pot-review-play" data-review-play aria-label="<?php esc_attr_e( 'Pause rotation', 'convertsell-toolkit' ); ?>" aria-pressed="true" data-play-label="<?php esc_attr_e( 'Play rotation', 'convertsell-toolkit' ); ?>" data-pause-label="<?php esc_attr_e( 'Pause rotation', 'convertsell-toolkit' ); ?>"><span aria-hidden="true">Ⅱ</span></button><?php endif; ?>
 	</div><?php endif; ?>
 	</div>
 	</section>
 	<?php
 	return ob_get_clean();
 }
-add_shortcode( 'purple_optimize_reviews', 'pot_reviews_shortcode' );
+add_shortcode( 'convertsell_reviews', 'pot_reviews_shortcode' );
+add_shortcode( 'purple_optimize_reviews', 'pot_reviews_shortcode' ); // Published content compatibility.
 
 /** Canonical shortcode independent of global settings, safe to copy between placements. */
 function pot_reviews_build_shortcode( array $config ): string {
-	$shortcode = '[purple_optimize_reviews';
+	$shortcode = '[convertsell_reviews';
 	foreach ( $config as $key => $value ) {
 		if ( ( 'products' === $key && 'products' !== $config['source'] ) || ( 'review_ids' === $key && 'reviews' !== $config['source'] ) || '' === (string) $value ) { continue; }
 		// Shortcode attribute syntax cannot quote literal brackets or double quotes.
@@ -115,7 +116,7 @@ function pot_reviews_build_shortcode( array $config ): string {
 
 /** Only our review shortcode may execute inside the restricted checkout document. */
 function pot_reviews_checkout_shortcodes( string $content ): string {
-	preg_match_all( '/' . get_shortcode_regex( array( 'purple_optimize_reviews' ) ) . '/s', $content, $matches, PREG_SET_ORDER );
+	preg_match_all( '/' . get_shortcode_regex( array( 'convertsell_reviews', 'purple_optimize_reviews' ) ) . '/s', $content, $matches, PREG_SET_ORDER );
 	$html = '';
 	foreach ( $matches as $match ) {
 		if ( '[' === $match[1] && ']' === $match[6] ) { continue; }
@@ -126,16 +127,16 @@ function pot_reviews_checkout_shortcodes( string $content ): string {
 
 /** Authenticated preview uses exactly the same normalization/query/render as shoppers. */
 function pot_preview_reviews(): void {
-	if ( ! current_user_can( 'manage_woocommerce' ) ) { wp_send_json_error( array( 'message' => __( 'You cannot preview reviews.', 'purple-optimize-toolkit' ) ), 403 ); }
+	if ( ! current_user_can( 'manage_woocommerce' ) ) { wp_send_json_error( array( 'message' => __( 'You cannot preview reviews.', 'convertsell-toolkit' ) ), 403 ); }
 	check_ajax_referer( 'pot_preview_reviews', 'nonce' );
 	$config = pot_reviews_config( isset( $_POST['config'] ) && is_array( $_POST['config'] ) ? wp_unslash( $_POST['config'] ) : array() );
 	if ( ( 'products' === $config['source'] && ! $config['products'] ) || ( 'reviews' === $config['source'] && ! $config['review_ids'] ) ) {
-		wp_send_json_error( array( 'message' => __( 'Enter at least one valid ID for the selected review source.', 'purple-optimize-toolkit' ) ), 400 );
+		wp_send_json_error( array( 'message' => __( 'Enter at least one valid ID for the selected review source.', 'convertsell-toolkit' ) ), 400 );
 	}
 	// Use the canonical attributes for both preview and copied shortcode, including heading syntax.
 	$shortcode = pot_reviews_build_shortcode( $config );
 	$html = pot_reviews_checkout_shortcodes( $shortcode );
-	wp_send_json_success( array( 'shortcode' => $shortcode, 'html' => $html, 'message' => $html ? __( 'Preview uses current approved reviews. Reviews update automatically when placed on your site.', 'purple-optimize-toolkit' ) : __( 'No approved reviews match. Change the selection or rating filter; nothing will display until a review matches.', 'purple-optimize-toolkit' ) ) );
+	wp_send_json_success( array( 'shortcode' => $shortcode, 'html' => $html, 'message' => $html ? __( 'Preview uses current approved reviews. Reviews update automatically when placed on your site.', 'convertsell-toolkit' ) : __( 'No approved reviews match. Change the selection or rating filter; nothing will display until a review matches.', 'convertsell-toolkit' ) ) );
 }
 add_action( 'wp_ajax_pot_preview_reviews', 'pot_preview_reviews' );
 

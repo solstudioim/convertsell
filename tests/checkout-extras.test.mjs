@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-const plugin = new URL('../wp-content/plugins/purple-optimize-toolkit/', import.meta.url);
+const plugin = new URL('../wp-content/plugins/convertsell-toolkit/', import.meta.url);
 const read = (file) => readFileSync(new URL(file, plugin), 'utf8');
 const php = read('includes/checkout-extras.php');
 const js = read('assets/checkout-extras.js');
